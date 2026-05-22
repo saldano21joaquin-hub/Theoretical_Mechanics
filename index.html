@@ -13,107 +13,144 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(to bottom, #ffffff 0%, #f5f1e8 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 40px 20px;
         }
 
         .container {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 700px;
-            padding: 60px 40px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            max-width: 800px;
+            padding: 80px 50px;
             text-align: center;
         }
 
         h1 {
-            font-size: 2.5rem;
-            color: #2c3e50;
-            margin-bottom: 15px;
+            font-size: 3rem;
+            color: #2c2c2c;
+            margin-bottom: 12px;
             font-weight: 700;
+            line-height: 1.2;
         }
 
         .subtitle {
-            font-size: 1.2rem;
-            color: #7f8c8d;
+            font-size: 1.3rem;
+            color: #5a5a5a;
+            margin-bottom: 10px;
+        }
+
+        .divider {
+            width: 150px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #e0a456, transparent);
+            margin: 40px auto 60px;
+        }
+
+        .intro-text {
+            font-size: 1.1rem;
+            color: #666666;
             margin-bottom: 50px;
+            line-height: 1.7;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .presentations {
             display: grid;
-            gap: 20px;
+            gap: 16px;
+            margin-bottom: 20px;
         }
 
         .pres-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 8px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-left: 4px solid #e0a456;
+            padding: 28px 30px;
+            border-radius: 6px;
             text-decoration: none;
-            transition: all 0.3s ease;
-            border: none;
+            transition: all 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
             cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: 600;
+            text-align: left;
+            display: block;
         }
 
         .pres-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            border-left-color: #e0a456;
+            box-shadow: 0 8px 24px rgba(224, 160, 86, 0.15);
+            transform: translateX(8px);
         }
 
-        .pres-card.ayudantia {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .pres-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #2c2c2c;
+            margin-bottom: 6px;
         }
 
-        .pres-card.braquistrona {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-
-        .pres-card.geodesicas {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-
-        .pres-card.fermat {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        .pres-desc {
+            font-size: 0.95rem;
+            color: #888888;
+            line-height: 1.5;
         }
 
         .footer {
-            margin-top: 60px;
-            padding-top: 30px;
-            border-top: 1px solid #ecf0f1;
-            color: #7f8c8d;
-            font-size: 0.95rem;
+            margin-top: 70px;
+            padding-top: 40px;
+            border-top: 1px solid #e0e0e0;
+            color: #888888;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .footer-author {
+            font-weight: 600;
+            color: #e0a456;
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Mecánica Intermedia 2026</h1>
-        <p class="subtitle">Universidad de Valparaíso</p>
+        <p class="subtitle">Cálculo Variacional</p>
+        <div class="divider"></div>
+
+        <p class="intro-text">
+            Presentaciones interactivas con desarrollo detallado de problemas fundamentales en mecánica clásica.
+        </p>
 
         <div class="presentations">
-            <a href="./ayudantia1-variacional-euler-lagrange/" class="pres-card ayudantia">
-                📚 Ayudantía 1: Variacional y Euler-Lagrange
+            <a href="./ayudantia1-variacional-euler-lagrange/" class="pres-card">
+                <div class="pres-title">Ayudantía 1: Variacional y Euler-Lagrange</div>
+                <div class="pres-desc">Fundamentos: extremización de funcionales, ecuaciones de Euler-Lagrange, recuperación de Newton</div>
             </a>
-            <a href="./braquistocrona/" class="pres-card braquistrona">
-                ⚡ Problema 3: La Braquistócrona
+
+            <a href="./braquistocrona/" class="pres-card">
+                <div class="pres-title">Problema 3: La Braquistócrona</div>
+                <div class="pres-desc">Curva de tiempo mínimo: caso sin velocidad inicial y con velocidad inicial</div>
             </a>
-            <a href="./geodesicas-esfera/" class="pres-card geodesicas">
-                🌍 Problema 2: Geodésicas Esféricas
+
+            <a href="./geodesicas-esfera/" class="pres-card">
+                <div class="pres-title">Problema 2: Geodésicas Esféricas</div>
+                <div class="pres-desc">Demostración de que las geodésicas en una esfera son círculos máximos</div>
             </a>
-            <a href="./fermat-indice-radial/" class="pres-card fermat">
-                🔦 Problema 5: Principio de Fermat
+
+            <a href="./fermat-indice-radial/" class="pres-card">
+                <div class="pres-title">Problema 5: Principio de Fermat</div>
+                <div class="pres-desc">Rayos de luz en atmósfera radial: propagación y órbitas circulares</div>
             </a>
         </div>
 
         <div class="footer">
-            <p>Presentaciones interactivas con cálculo variacional</p>
-            <p style="margin-top: 10px;">Joaquín Saldaño</p>
+            <p>Universidad de Valparaíso</p>
+            <div class="footer-author">Joaquín Saldaño</div>
         </div>
     </div>
 </body>
