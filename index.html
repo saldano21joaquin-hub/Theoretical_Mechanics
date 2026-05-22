@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mecánica Intermedia 2026 - Presentaciones</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 700px;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 50px;
+        }
+
+        .presentations {
+            display: grid;
+            gap: 20px;
+        }
+
+        .pres-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .pres-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .pres-card.ayudantia {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .pres-card.braquistrona {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .pres-card.geodesicas {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .pres-card.fermat {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .footer {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #ecf0f1;
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mecánica Intermedia 2026</h1>
+        <p class="subtitle">Universidad de Valparaíso</p>
+
+        <div class="presentations">
+            <a href="./ayudantia1-variacional-euler-lagrange/" class="pres-card ayudantia">
+                📚 Ayudantía 1: Variacional y Euler-Lagrange
+            </a>
+            <a href="./braquistocrona/" class="pres-card braquistrona">
+                ⚡ Problema 3: La Braquistócrona
+            </a>
+            <a href="./geodesicas-esfera/" class="pres-card geodesicas">
+                🌍 Problema 2: Geodésicas Esféricas
+            </a>
+            <a href="./fermat-indice-radial/" class="pres-card fermat">
+                🔦 Problema 5: Principio de Fermat
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>Presentaciones interactivas con cálculo variacional</p>
+            <p style="margin-top: 10px;">Joaquín Saldaño</p>
+        </div>
+    </div>
+</body>
+</html>
