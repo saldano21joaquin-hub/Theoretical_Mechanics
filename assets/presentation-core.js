@@ -22,6 +22,8 @@
       this.counterTotal = document.getElementById('total-slides');
       this.progress = document.getElementById('pb');
       this.resizeFrame = 0;
+      this.fitFrame = 0;
+      this.fittedSlides = new WeakSet();
     }
 
     start() {
@@ -116,7 +118,8 @@
 
       window.addEventListener('resize', () => {
         window.cancelAnimationFrame(this.resizeFrame);
-        this.resizeFrame = window.requestAnimationFrame(() => this.fitCurrentSlide());
+        this.fittedSlides = new WeakSet();
+        this.resizeFrame = window.requestAnimationFrame(() => this.scheduleFit({ force: true }));
       });
     }
 
@@ -143,8 +146,6 @@
         } else {
           nextFragment.classList.add('visible');
         }
-
-        this.fitCurrentSlide();
         return;
       }
 
@@ -167,7 +168,6 @@
           : [last];
 
         toHide.forEach((fragment) => fragment.classList.remove('visible'));
-        this.fitCurrentSlide();
         return;
       }
 
@@ -206,7 +206,7 @@
       }
 
       this.updateCounters();
-      this.fitCurrentSlide();
+      this.scheduleFit();
     }
 
     updateCounters() {
@@ -227,6 +227,18 @@
 
       this.fitBlockMath(slide);
       this.fitSlideContent(slide);
+      this.fittedSlides.add(slide);
+    }
+
+    scheduleFit(options) {
+      if (!this.options.fit) return;
+
+      const slide = this.slides[this.current];
+      if (!slide) return;
+      if (!options?.force && this.fittedSlides.has(slide)) return;
+
+      window.cancelAnimationFrame(this.fitFrame);
+      this.fitFrame = window.requestAnimationFrame(() => this.fitCurrentSlide());
     }
 
     fitBlockMath(slide) {
