@@ -129,6 +129,17 @@
             color: #b78b4d;
         }
 
+        .content-list li:has(.katex),
+        .content-list li.boxed-line {
+            padding-left: 0;
+            text-align: center;
+        }
+
+        .content-list li:has(.katex)::before,
+        .content-list li.boxed-line::before {
+            content: '';
+        }
+
         .math-line,
         .equation-line {
             margin: 7px 0;
@@ -137,12 +148,15 @@
             max-width: 100%;
             overflow-x: auto;
             overflow-y: hidden;
+            text-align: center;
         }
 
         .boxed-line {
-            margin-top: 14px;
+            margin: 16px auto 0;
             color: #1f1f1f;
             font-weight: 600;
+            border-top: 1px solid rgba(224, 164, 86, 0.35);
+            padding-top: 12px;
         }
 
         .two-column {
@@ -154,9 +168,12 @@
         }
 
         .column {
-            text-align: left;
+            text-align: center;
             min-width: 0;
-            overflow: hidden;
+            overflow: visible;
+            padding: 10px 12px;
+            border-left: 3px solid rgba(224, 164, 86, 0.35);
+            background: rgba(255, 255, 255, 0.42);
         }
 
         .column .equation-line,
