@@ -21,22 +21,44 @@
             width: 100vw;
             height: 100vh;
             background: #ffffff;
+            position: relative;
+            overflow: hidden;
         }
 
         .slide {
             width: 100%;
             height: 100%;
-            display: none;
+            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 42px 46px 104px 46px;
+            padding: 34px 44px 94px 44px;
             background: linear-gradient(to bottom, #ffffff 0%, #f5f1e8 100%);
-            position: relative;
+            position: absolute;
+            inset: 0;
             overflow: hidden;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: transform 0.58s cubic-bezier(0.26, 0.86, 0.44, 0.985), opacity 0.32s ease;
+            pointer-events: none;
         }
 
-        .slide.active { display: flex; }
+        .slide.active,
+        .slide.present {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        .slide.past {
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+
+        .slide.future {
+            opacity: 0;
+            transform: translateX(100%);
+        }
 
         .slide::after {
             content: '';
@@ -55,14 +77,14 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 1240px;
+            max-width: 1280px;
             text-align: center;
         }
 
         .slide-title {
-            font-size: 2.15rem;
+            font-size: 2.02rem;
             color: #2c2c2c;
-            margin-bottom: 24px;
+            margin-bottom: 18px;
             line-height: 1.2;
         }
 
@@ -88,14 +110,14 @@
         .content-list {
             list-style: none;
             text-align: left;
-            max-width: 1080px;
+            max-width: 1120px;
             margin: 0 auto;
-            font-size: 1.18rem;
-            line-height: 1.58;
+            font-size: 1.1rem;
+            line-height: 1.48;
         }
 
         .content-list li {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             padding-left: 22px;
             position: relative;
         }
@@ -109,9 +131,12 @@
 
         .math-line,
         .equation-line {
-            margin: 9px 0;
-            line-height: 1.55;
-            font-size: 1.08rem;
+            margin: 7px 0;
+            line-height: 1.42;
+            font-size: 1rem;
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
         }
 
         .boxed-line {
@@ -123,7 +148,7 @@
         .two-column {
             display: grid;
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-            gap: 30px;
+            gap: 24px;
             align-items: start;
             width: 100%;
         }
@@ -131,23 +156,35 @@
         .column {
             text-align: left;
             min-width: 0;
+            overflow: hidden;
         }
 
         .column .equation-line,
         .column .math-line {
-            font-size: 0.98rem;
-            line-height: 1.48;
+            font-size: 0.86rem;
+            line-height: 1.34;
         }
 
-        .dense .slide-title { font-size: 1.78rem; margin-bottom: 16px; }
-        .dense .content-list { font-size: 1.02rem; line-height: 1.42; }
-        .dense .content-list li { margin-bottom: 5px; }
+        .dense .slide-title { font-size: 1.68rem; margin-bottom: 12px; }
+        .dense .content-list { font-size: 0.95rem; line-height: 1.32; }
+        .dense .content-list li { margin-bottom: 4px; }
         .dense .equation-line,
-        .dense .math-line { font-size: 0.92rem; line-height: 1.36; margin: 6px 0; }
+        .dense .math-line { font-size: 0.84rem; line-height: 1.28; margin: 5px 0; }
 
-        .very-dense .slide-title { font-size: 1.55rem; margin-bottom: 12px; }
+        .very-dense .slide-title { font-size: 1.42rem; margin-bottom: 10px; }
         .very-dense .equation-line,
-        .very-dense .math-line { font-size: 0.78rem; line-height: 1.26; margin: 5px 0; }
+        .very-dense .math-line { font-size: 0.70rem; line-height: 1.2; margin: 4px 0; }
+
+        .fragment {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.24s ease, transform 0.24s ease;
+        }
+
+        .fragment.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
         .diagram-wrap {
             width: min(460px, 90vw);
@@ -196,6 +233,10 @@
             margin: 0.22em 0;
             overflow-x: auto;
             overflow-y: hidden;
+        }
+
+        .katex {
+            max-width: 100%;
         }
 
         @media (max-width: 900px) {
@@ -783,24 +824,62 @@
 
     <script>
         let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
+        const slides = Array.from(document.querySelectorAll('.slide'));
         const totalSlides = slides.length;
 
         document.getElementById('total-slides').textContent = totalSlides;
 
+        function prepareFragments() {
+            slides.forEach((slide) => {
+                slide.querySelectorAll('.content-list li, .equation-line, .math-line').forEach((element) => {
+                    element.classList.add('fragment');
+                });
+            });
+        }
+
+        function getFragments(slide) {
+            return Array.from(slide.querySelectorAll('.fragment'));
+        }
+
+        function revealAll(slide) {
+            getFragments(slide).forEach((fragment) => fragment.classList.add('visible'));
+        }
+
+        function resetFragments(slide) {
+            getFragments(slide).forEach((fragment) => fragment.classList.remove('visible'));
+        }
+
         function showSlide(n) {
-            slides[currentSlide].classList.remove('active');
             currentSlide = (n + totalSlides) % totalSlides;
-            slides[currentSlide].classList.add('active');
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'past', 'present', 'future');
+                if (index < currentSlide) slide.classList.add('past');
+                else if (index === currentSlide) slide.classList.add('active', 'present');
+                else slide.classList.add('future');
+            });
+            resetFragments(slides[currentSlide]);
             document.getElementById('current-slide').textContent = currentSlide + 1;
         }
 
         function nextSlide() {
+            const fragments = getFragments(slides[currentSlide]);
+            const nextFragment = fragments.find((fragment) => !fragment.classList.contains('visible'));
+            if (nextFragment) {
+                nextFragment.classList.add('visible');
+                return;
+            }
             showSlide(currentSlide + 1);
         }
 
         function prevSlide() {
+            const fragments = getFragments(slides[currentSlide]);
+            const visibleFragments = fragments.filter((fragment) => fragment.classList.contains('visible'));
+            if (visibleFragments.length > 0) {
+                visibleFragments[visibleFragments.length - 1].classList.remove('visible');
+                return;
+            }
             showSlide(currentSlide - 1);
+            revealAll(slides[currentSlide]);
         }
 
         document.getElementById('next-btn').addEventListener('click', nextSlide);
@@ -821,6 +900,7 @@
             if (e.target.closest('.slide.active')) nextSlide();
         });
 
+        prepareFragments();
         showSlide(0);
 
         document.addEventListener('DOMContentLoaded', function() {
