@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 10 — Péndulo con resorte vertical</title>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #ffffff;
+            color: #2c2c2c;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            background: #ffffff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 34px 44px 94px 44px;
+            background: linear-gradient(to bottom, #ffffff 0%, #f5f1e8 100%);
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: transform 0.58s cubic-bezier(0.26, 0.86, 0.44, 0.985), opacity 0.32s ease;
+            pointer-events: none;
+        }
+
+        .slide.present {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        .slide.past {
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+
+        .slide.future {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+
+        .slide::after {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            right: 18px;
+            bottom: 92px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .slide-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1280px;
+            text-align: center;
+        }
+
+        .slide-title {
+            font-size: 1.9rem;
+            color: #2c2c2c;
+            margin-bottom: 18px;
+            line-height: 1.2;
+        }
+
+        .portada-title {
+            font-size: 3.1rem;
+            line-height: 1.12;
+            margin-bottom: 16px;
+        }
+
+        .portada-subtitle {
+            max-width: 940px;
+            margin: 0 auto 26px;
+            font-size: 1.28rem;
+            color: #5a5a5a;
+            line-height: 1.45;
+        }
+
+        .divider {
+            width: 190px;
+            height: 3px;
+            margin: 24px auto 28px;
+            background: linear-gradient(to right, transparent, #e0a456, transparent);
+        }
+
+        .content-list {
+            list-style: none;
+            text-align: left;
+            max-width: 1120px;
+            margin: 0 auto;
+            font-size: 1rem;
+            line-height: 1.38;
+        }
+
+        .content-list li {
+            margin-bottom: 5px;
+            padding-left: 22px;
+            position: relative;
+        }
+
+        .content-list li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: #b78b4d;
+        }
+
+        .content-list li:has(.katex),
+        .content-list li.boxed-line {
+            padding-left: 0;
+            text-align: center;
+        }
+
+        .content-list li:has(.katex)::before,
+        .content-list li.boxed-line::before {
+            content: '';
+        }
+
+        .math-line,
+        .equation-line {
+            margin: 7px 0;
+            line-height: 1.34;
+            font-size: 0.9rem;
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            text-align: center;
+        }
+
+        .boxed-line {
+            margin: 14px auto 0;
+            color: #1f1f1f;
+            font-weight: 600;
+            border-top: 1px solid rgba(224, 164, 86, 0.35);
+            padding-top: 10px;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 24px;
+            align-items: start;
+            width: 100%;
+        }
+
+        .column {
+            text-align: center;
+            min-width: 0;
+            overflow: visible;
+            padding: 10px 12px;
+            border-left: 3px solid rgba(224, 164, 86, 0.35);
+            background: rgba(255, 255, 255, 0.42);
+        }
+
+        .column .equation-line,
+        .column .math-line {
+            font-size: 0.78rem;
+            line-height: 1.26;
+        }
+
+        .dense .slide-title { font-size: 1.58rem; margin-bottom: 12px; }
+        .dense .content-list { font-size: 0.88rem; line-height: 1.25; }
+        .dense .content-list li { margin-bottom: 4px; }
+        .dense .equation-line,
+        .dense .math-line { font-size: 0.76rem; line-height: 1.22; margin: 5px 0; }
+
+        .fragment {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.24s ease, transform 0.24s ease;
+        }
+
+        .fragment.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 28px;
+            left: 48px;
+            z-index: 10;
+            color: #888888;
+            font-size: 0.98rem;
+            font-family: monospace;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 22px;
+            right: 48px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-button {
+            width: 42px;
+            height: 34px;
+            border: 1px solid #d8d8d8;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.92);
+            color: #2c2c2c;
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+
+        .nav-button:hover { background: #f5f1e8; }
+
+        .katex-display {
+            margin: 0.22em 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .katex { max-width: 100%; }
+
+        @media (max-width: 900px) {
+            .slide { padding: 32px 24px 92px 24px; }
+            .two-column { grid-template-columns: 1fr; gap: 12px; }
+            .slide-title { font-size: 1.45rem; }
+            .content-list { font-size: 0.92rem; }
+            .navigation { right: 24px; }
+            .slide-counter { left: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container" id="deck"></div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">43</span>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-button" id="prev-btn">←</button>
+        <button class="nav-button" id="next-btn">→</button>
+    </div>
+
+    <script>
+        const raw = String.raw;
+        const slidesData = [
+            { type: 'Portada', title: 'Ejercicio 10 — Péndulo con resorte vertical', subtitle: 'Newton en la base móvil, Lagrange con restricción y equivalencia entre ambos métodos' },
+            { type: 'Teoría', title: 'Geometría y convención de signos', items: [
+                'Tomamos:', 'eje $x$ horizontal hacia la derecha,', 'eje $y$ vertical positivo hacia abajo.',
+                'La partícula de masa $m$ está unida al punto móvil del resorte por una cuerda o varilla de longitud $r$.',
+                'El resorte se mueve solo sobre la recta vertical.', 'La extensión del resorte se describe con la coordenada $y$.',
+                'El ángulo de la cuerda con la vertical hacia abajo es $\\theta$.', 'La restricción geométrica de cuerda rígida será', raw`$\boxed{r-l=0}$`
+            ] },
+            { type: 'Teoría', title: 'Base fija y base móvil', items: [
+                'Base cartesiana fija:', raw`$\hat{\mathbf i},\hat{\mathbf j}$`, 'con',
+                raw`$\hat{\mathbf i}\cdot\hat{\mathbf i}=1,\qquad \hat{\mathbf j}\cdot\hat{\mathbf j}=1,\qquad \hat{\mathbf i}\cdot\hat{\mathbf j}=0$`,
+                'Base móvil asociada a la cuerda:', raw`$\hat{\mathbf e}_1=$ dirección de la cuerda`, raw`$\hat{\mathbf e}_2=$ dirección perpendicular, positiva al aumentar $\theta$`,
+                'Con nuestra convención:', raw`$\boxed{\hat{\mathbf e}_1=\sin\theta\,\hat{\mathbf i}+\cos\theta\,\hat{\mathbf j}}$`,
+                raw`$\boxed{\hat{\mathbf e}_2=\cos\theta\,\hat{\mathbf i}-\sin\theta\,\hat{\mathbf j}}$`
+            ] },
+            { type: 'Cálculos', title: 'Relaciones útiles entre las bases', items: [
+                raw`Derivamos $\hat{\mathbf e}_1$ respecto del tiempo:`,
+                raw`$\dot{\hat{\mathbf e}}_1=\dot\theta\cos\theta\,\hat{\mathbf i}-\dot\theta\sin\theta\,\hat{\mathbf j}$`,
+                'Factorizando:', raw`$\boxed{\dot{\hat{\mathbf e}}_1=\dot\theta\,\hat{\mathbf e}_2}$`,
+                raw`Derivamos $\hat{\mathbf e}_2$:`,
+                raw`$\dot{\hat{\mathbf e}}_2=-\dot\theta\sin\theta\,\hat{\mathbf i}-\dot\theta\cos\theta\,\hat{\mathbf j}$`,
+                'Esto es', raw`$\boxed{\dot{\hat{\mathbf e}}_2=-\dot\theta\,\hat{\mathbf e}_1}$`,
+                raw`Además, necesitaremos escribir $\hat{\mathbf j}$ en la base móvil:`,
+                raw`$\boxed{\hat{\mathbf j}=\cos\theta\,\hat{\mathbf e}_1-\sin\theta\,\hat{\mathbf e}_2}$`
+            ] },
+            { type: 'Cálculos', title: 'Vector posición de la partícula', items: [
+                'La posición de la partícula se obtiene sumando:', raw`1. el desplazamiento vertical del punto móvil del resorte: $y\,\hat{\mathbf j}$`,
+                raw`2. el desplazamiento a lo largo de la cuerda: $r\,\hat{\mathbf e}_1$`, 'Entonces',
+                raw`$\boxed{\vec r=y\,\hat{\mathbf j}+r\,\hat{\mathbf e}_1}$`, raw`Sustituyendo $\hat{\mathbf e}_1$:`,
+                raw`$\vec r=y\,\hat{\mathbf j}+r(\sin\theta\,\hat{\mathbf i}+\cos\theta\,\hat{\mathbf j})$`,
+                'Agrupando componentes cartesianas:', raw`$\boxed{\vec r=r\sin\theta\,\hat{\mathbf i}+(r\cos\theta+y)\,\hat{\mathbf j}}$`
+            ] },
+            { type: 'Teoría', title: 'Fuerzas que actúan sobre la partícula', items: [
+                'Sobre la partícula actúan solo dos fuerzas:', '1. su peso:', raw`$\vec P=mg\,\hat{\mathbf j}$`,
+                'porque el eje $y$ apunta positivamente hacia abajo', '2. la tensión de la cuerda:', raw`$\vec T=-R\,\hat{\mathbf e}_1$`,
+                'donde $R$ es el módulo de la tensión',
+                raw`El signo menos aparece porque la tensión sobre la partícula apunta hacia el punto de suspensión, es decir, en dirección opuesta a $\hat{\mathbf e}_1$`
+            ] },
+            { type: 'Teoría', title: 'Fuerza que actúa sobre el resorte', items: [
+                'El resorte solo puede moverse verticalmente.',
+                raw`La cuerda tira del extremo móvil del resorte con una fuerza de módulo $R$ a lo largo de $\hat{\mathbf e}_1$.`,
+                'La componente vertical de esa fuerza es', raw`$R(\hat{\mathbf e}_1\cdot\hat{\mathbf j})=R\cos\theta$`,
+                'El resorte ejerce una fuerza restauradora de módulo $ky$ en sentido opuesto al crecimiento de $y$.',
+                'Como el punto móvil es ideal y no tiene masa, la condición vertical será', raw`$\boxed{R\cos\theta=ky}$`,
+                'Esta ecuación aparecerá luego naturalmente desde Lagrange.'
+            ] },
+            { type: 'Cálculos', title: 'Velocidad de la partícula', items: [
+                'Derivamos', raw`$\vec r=y\,\hat{\mathbf j}+r\,\hat{\mathbf e}_1$`, 'respecto del tiempo:',
+                raw`$\dot{\vec r}=\dot y\,\hat{\mathbf j}+\dot r\,\hat{\mathbf e}_1+r\,\dot{\hat{\mathbf e}}_1$`,
+                raw`Sustituyendo $\dot{\hat{\mathbf e}}_1=\dot\theta\,\hat{\mathbf e}_2$:`,
+                raw`$\dot{\vec r}=\dot y\,\hat{\mathbf j}+\dot r\,\hat{\mathbf e}_1+r\dot\theta\,\hat{\mathbf e}_2$`,
+                'Ahora sustituimos', raw`$\hat{\mathbf j}=\cos\theta\,\hat{\mathbf e}_1-\sin\theta\,\hat{\mathbf e}_2$`, 'y queda',
+                raw`$\dot{\vec r}=\dot y(\cos\theta\,\hat{\mathbf e}_1-\sin\theta\,\hat{\mathbf e}_2)+\dot r\,\hat{\mathbf e}_1+r\dot\theta\,\hat{\mathbf e}_2$`
+            ] },
+            { type: 'Cálculos', title: raw`Velocidad en componentes sobre $\hat{\mathbf e}_1,\hat{\mathbf e}_2$`, items: [
+                'Agrupando términos:',
+                raw`$\dot{\vec r}=(\dot r+\dot y\cos\theta)\hat{\mathbf e}_1+(r\dot\theta-\dot y\sin\theta)\hat{\mathbf e}_2$`,
+                'Entonces', raw`$\boxed{\dot{\vec r}=(\dot r+\dot y\cos\theta)\hat{\mathbf e}_1+(r\dot\theta-\dot y\sin\theta)\hat{\mathbf e}_2}$`
+            ] },
+            { type: 'Cálculos', dense: true, title: 'Aceleración de la partícula', items: [
+                'Derivamos la expresión anterior:',
+                raw`$\ddot{\vec r}=\frac{d}{dt}(\dot r+\dot y\cos\theta)\hat{\mathbf e}_1+(\dot r+\dot y\cos\theta)\dot{\hat{\mathbf e}}_1+\frac{d}{dt}(r\dot\theta-\dot y\sin\theta)\hat{\mathbf e}_2+(r\dot\theta-\dot y\sin\theta)\dot{\hat{\mathbf e}}_2$`,
+                'Usando', raw`$\dot{\hat{\mathbf e}}_1=\dot\theta\,\hat{\mathbf e}_2,\qquad \dot{\hat{\mathbf e}}_2=-\dot\theta\,\hat{\mathbf e}_1$`,
+                'obtenemos',
+                raw`$\ddot{\vec r}=\left[\frac{d}{dt}(\dot r+\dot y\cos\theta)-(r\dot\theta-\dot y\sin\theta)\dot\theta\right]\hat{\mathbf e}_1+\left[\frac{d}{dt}(r\dot\theta-\dot y\sin\theta)+(\dot r+\dot y\cos\theta)\dot\theta\right]\hat{\mathbf e}_2$`
+            ] },
+            { type: 'Cálculos', title: raw`Simplificación de la componente sobre $\hat{\mathbf e}_1$`, columns: [
+                [raw`$\frac{d}{dt}(\dot r+\dot y\cos\theta)=\ddot r+\ddot y\cos\theta-\dot y\sin\theta\,\dot\theta$`, raw`$(r\dot\theta-\dot y\sin\theta)\dot\theta=r\dot\theta^2-\dot y\sin\theta\,\dot\theta$`],
+                ['Restando:', raw`$\ddot r+\ddot y\cos\theta-\dot y\sin\theta\,\dot\theta-r\dot\theta^2+\dot y\sin\theta\,\dot\theta$`, raw`$=\boxed{\ddot r+\ddot y\cos\theta-r\dot\theta^2}$`]
+            ] },
+            { type: 'Cálculos', title: raw`Simplificación de la componente sobre $\hat{\mathbf e}_2$`, columns: [
+                [raw`$\frac{d}{dt}(r\dot\theta-\dot y\sin\theta)=\dot r\dot\theta+r\ddot\theta-\ddot y\sin\theta-\dot y\cos\theta\,\dot\theta$`, raw`$(\dot r+\dot y\cos\theta)\dot\theta=\dot r\dot\theta+\dot y\cos\theta\,\dot\theta$`],
+                ['Sumando:', raw`$\dot r\dot\theta+r\ddot\theta-\ddot y\sin\theta-\dot y\cos\theta\,\dot\theta+\dot r\dot\theta+\dot y\cos\theta\,\dot\theta$`, raw`$=\boxed{2\dot r\dot\theta+r\ddot\theta-\ddot y\sin\theta}$`]
+            ] },
+            { type: 'Conclusión', title: 'Aceleración final en la base móvil', items: [
+                'Finalmente',
+                raw`$\boxed{\ddot{\vec r}=\left(\ddot r+\ddot y\cos\theta-r\dot\theta^2\right)\hat{\mathbf e}_1+\left(2\dot r\dot\theta+r\ddot\theta-\ddot y\sin\theta\right)\hat{\mathbf e}_2}$`
+            ] },
+            { type: 'Cálculos', title: 'Descomposición del peso en la base móvil', items: [
+                'Como', raw`$\hat{\mathbf j}=\cos\theta\,\hat{\mathbf e}_1-\sin\theta\,\hat{\mathbf e}_2$`,
+                'el peso se escribe como', raw`$\vec P=mg\,\hat{\mathbf j}=mg\cos\theta\,\hat{\mathbf e}_1-mg\sin\theta\,\hat{\mathbf e}_2$`
+            ] },
+            { type: 'Cálculos', title: raw`Newton sobre $\hat{\mathbf e}_1$`, items: [
+                raw`La componente de la fuerza total sobre $\hat{\mathbf e}_1$ es`, raw`$mg\cos\theta-R$`,
+                raw`Entonces, usando $m\vec a=\sum \vec F$:`,
+                raw`$m\left(\ddot r+\ddot y\cos\theta-r\dot\theta^2\right)=mg\cos\theta-R$`,
+                'Ésta es la primera ecuación de Newton:',
+                raw`$\boxed{m\left(\ddot r+\ddot y\cos\theta-r\dot\theta^2\right)=mg\cos\theta-R}$`
+            ] },
+            { type: 'Cálculos', title: raw`Newton sobre $\hat{\mathbf e}_2$`, items: [
+                raw`La componente de la fuerza total sobre $\hat{\mathbf e}_2$ es`, raw`$-mg\sin\theta$`, 'Entonces',
+                raw`$m\left(2\dot r\dot\theta+r\ddot\theta-\ddot y\sin\theta\right)=-mg\sin\theta$`,
+                'Ésta es la segunda ecuación de Newton:',
+                raw`$\boxed{m\left(2\dot r\dot\theta+r\ddot\theta-\ddot y\sin\theta\right)=-mg\sin\theta}$`
+            ] },
+            { type: 'Cálculos', title: 'Ecuación vertical del resorte', items: [
+                'La componente vertical de la tensión es', raw`$R\cos\theta$`, 'La fuerza del resorte tiene módulo', raw`$ky$`,
+                'Por tanto, la ecuación del resorte es', raw`$\boxed{R\cos\theta=ky}$`, 'Con esto queda completo el apartado (a).'
+            ] },
+            { type: 'Teoría', title: 'Paso a Lagrange', items: [
+                'Ahora queremos demostrar que las ecuaciones anteriores son equivalentes a las de Lagrange.',
+                'Las variables serán', raw`$r,\theta,y$`, 'con la restricción', raw`$r-l=0$`,
+                'Como hay una restricción holónoma, la incorporamos con un multiplicador de Lagrange.',
+                'Lo llamaremos $R$, y veremos que coincide con la tensión.'
+            ] },
+            { type: 'Cálculos', title: 'Energía cinética a partir de la velocidad', items: [
+                'Partimos de', raw`$\dot{\vec r}=(\dot r+\dot y\cos\theta)\hat{\mathbf e}_1+(r\dot\theta-\dot y\sin\theta)\hat{\mathbf e}_2$`,
+                'Entonces', raw`$T=\frac12 m\,\dot{\vec r}\cdot\dot{\vec r}$`,
+                raw`Como $\hat{\mathbf e}_1\cdot\hat{\mathbf e}_1=1,\quad \hat{\mathbf e}_2\cdot\hat{\mathbf e}_2=1,\quad \hat{\mathbf e}_1\cdot\hat{\mathbf e}_2=0$`,
+                'se obtiene', raw`$\boxed{T=\frac12 m(\dot r+\dot y\cos\theta)^2+\frac12 m(r\dot\theta-\dot y\sin\theta)^2}$`
+            ] },
+            { type: 'Cálculos', dense: true, title: 'Energía cinética en forma cartesiana', items: [
+                'Desde', raw`$\vec r=r\sin\theta\,\hat{\mathbf i}+(r\cos\theta+y)\hat{\mathbf j}$`, 'obtenemos',
+                raw`$\dot x=\dot r\sin\theta+r\cos\theta\,\dot\theta$`,
+                raw`$\dot y_{\text{tot}}=\dot r\cos\theta-r\sin\theta\,\dot\theta+\dot y$`,
+                'Entonces', raw`$\boxed{T=\frac12 m(\dot r\sin\theta+r\cos\theta\,\dot\theta)^2+\frac12 m(\dot r\cos\theta-r\sin\theta\,\dot\theta+\dot y)^2}$`,
+                'Esta forma es completamente equivalente a la anterior.'
+            ] },
+            { type: 'Cálculos', dense: true, title: raw`Expansión completa de $T$`, items: [
+                'Expandimos', raw`$T=\frac12 m(\dot r+\dot y\cos\theta)^2+\frac12 m(r\dot\theta-\dot y\sin\theta)^2$`,
+                'Primero:', raw`$(\dot r+\dot y\cos\theta)^2=\dot r^2+2\dot r\dot y\cos\theta+\dot y^2\cos^2\theta$`,
+                'Segundo:', raw`$(r\dot\theta-\dot y\sin\theta)^2=r^2\dot\theta^2-2r\dot\theta\dot y\sin\theta+\dot y^2\sin^2\theta$`,
+                'Sumando:', raw`$T=\frac12 m\left[\dot r^2+2\dot r\dot y\cos\theta+\dot y^2\cos^2\theta+r^2\dot\theta^2-2r\dot\theta\dot y\sin\theta+\dot y^2\sin^2\theta\right]$`
+            ] },
+            { type: 'Cálculos', title: raw`Simplificación de $T$`, items: [
+                raw`Agrupamos los términos con $\dot y^2$:`,
+                raw`$\dot y^2\cos^2\theta+\dot y^2\sin^2\theta=\dot y^2(\cos^2\theta+\sin^2\theta)=\dot y^2$`,
+                'Entonces', raw`$\boxed{T=\frac12 m\left(\dot r^2+r^2\dot\theta^2+\dot y^2+2\dot r\dot y\cos\theta-2r\dot\theta\dot y\sin\theta\right)}$`
+            ] },
+            { type: 'Cálculos', title: 'Energía potencial', items: [
+                'El potencial del resorte es', raw`$\frac12 ky^2$`,
+                'Como el eje $y$ apunta hacia abajo, el potencial gravitatorio de la partícula es',
+                raw`$-mg(r\cos\theta+y)$`, 'Por tanto', raw`$\boxed{U=\frac12 ky^2-mg(r\cos\theta+y)}$`
+            ] },
+            { type: 'Cálculos', title: 'Lagrangiano con restricción', items: [
+                'El lagrangiano libre sería', raw`$L=T-U$`, 'Como existe la restricción', raw`$r-l=0$`,
+                'introducimos el multiplicador $R$ y tomamos', raw`$\boxed{\mathcal L=T-U-R(r-l)}$`,
+                'Esta elección de signo hará que $R$ salga con el mismo signo físico de la tensión.'
+            ] },
+            { type: 'Teoría', title: raw`Ecuación de Lagrange para $r$`, items: [
+                'Debemos calcular', raw`$\dfrac{d}{dt}\left(\dfrac{\partial \mathcal L}{\partial \dot r}\right)-\dfrac{\partial \mathcal L}{\partial r}=0$`
+            ] },
+            { type: 'Cálculos', dense: true, title: raw`Derivadas para la ecuación de $r$`, items: [
+                'Desde', raw`$T=\frac12 m\left(\dot r^2+r^2\dot\theta^2+\dot y^2+2\dot r\dot y\cos\theta-2r\dot\theta\dot y\sin\theta\right)$`,
+                'obtenemos', raw`$\frac{\partial T}{\partial \dot r}=\frac12 m(2\dot r+2\dot y\cos\theta)=m(\dot r+\dot y\cos\theta)$`,
+                'Entonces', raw`$\frac{d}{dt}\left(\frac{\partial T}{\partial \dot r}\right)=m(\ddot r+\ddot y\cos\theta-\dot y\sin\theta\,\dot\theta)$`,
+                'Además', raw`$\frac{\partial T}{\partial r}=\frac12 m(2r\dot\theta^2-2\dot\theta\dot y\sin\theta)=m(r\dot\theta^2-\dot y\dot\theta\sin\theta)$`
+            ] },
+            { type: 'Cálculos', title: raw`Continuación de la ecuación de $r$`, items: [
+                'Ahora derivamos el potencial:', raw`$\frac{\partial U}{\partial r}=-mg\cos\theta$`,
+                'Y el término de restricción:', raw`$\frac{\partial}{\partial r}\left[-R(r-l)\right]=-R$`, 'Luego',
+                raw`$\frac{\partial \mathcal L}{\partial r}=\frac{\partial T}{\partial r}-\frac{\partial U}{\partial r}-R$`,
+                'es decir', raw`$\frac{\partial \mathcal L}{\partial r}=m(r\dot\theta^2-\dot y\dot\theta\sin\theta)+mg\cos\theta-R$`
+            ] },
+            { type: 'Cálculos', dense: true, title: raw`Ecuación de Lagrange para $r$ ya simplificada`, items: [
+                'Sustituimos en', raw`$\dfrac{d}{dt}\left(\dfrac{\partial \mathcal L}{\partial \dot r}\right)-\dfrac{\partial \mathcal L}{\partial r}=0$`, 'y queda',
+                raw`$m(\ddot r+\ddot y\cos\theta-\dot y\sin\theta\,\dot\theta)-\left[m(r\dot\theta^2-\dot y\dot\theta\sin\theta)+mg\cos\theta-R\right]=0$`,
+                raw`Al expandir, los términos $\pm m\dot y\dot\theta\sin\theta$ se cancelan.`,
+                'Entonces', raw`$\boxed{m\left(\ddot r+\ddot y\cos\theta-r\dot\theta^2\right)=mg\cos\theta-R}$`,
+                raw`Ésta coincide exactamente con la ecuación de Newton sobre $\hat{\mathbf e}_1$.`
+            ] },
+            { type: 'Teoría', title: raw`Ecuación de Lagrange para $\theta$`, items: [
+                'Ahora calculamos', raw`$\dfrac{d}{dt}\left(\dfrac{\partial \mathcal L}{\partial \dot\theta}\right)-\dfrac{\partial \mathcal L}{\partial \theta}=0$`
+            ] },
+            { type: 'Cálculos', dense: true, title: raw`Derivadas para la ecuación de $\theta$`, items: [
+                'Desde $T$:', raw`$\frac{\partial T}{\partial \dot\theta}=\frac12 m(2r^2\dot\theta-2r\dot y\sin\theta)=m(r^2\dot\theta-r\dot y\sin\theta)$`,
+                'Derivando respecto del tiempo:',
+                raw`$\frac{d}{dt}\left(\frac{\partial T}{\partial \dot\theta}\right)=m\left(2r\dot r\dot\theta+r^2\ddot\theta-\dot r\dot y\sin\theta-r\ddot y\sin\theta-r\dot y\cos\theta\,\dot\theta\right)$`
+            ] },
+            { type: 'Cálculos', dense: true, title: raw`Continuación de la ecuación de $\theta$`, items: [
+                'Ahora', raw`$\frac{\partial T}{\partial \theta}=\frac12 m\left[-2\dot r\dot y\sin\theta-2r\dot\theta\dot y\cos\theta\right]$`,
+                'luego', raw`$\frac{\partial T}{\partial \theta}=m(-\dot r\dot y\sin\theta-r\dot\theta\dot y\cos\theta)$`,
+                'Además', raw`$\frac{\partial U}{\partial \theta}=mgr\sin\theta$`, 'y el término de restricción no depende de $\\theta$',
+                'Entonces', raw`$\frac{\partial \mathcal L}{\partial \theta}=\frac{\partial T}{\partial \theta}-\frac{\partial U}{\partial \theta}=m(-\dot r\dot y\sin\theta-r\dot\theta\dot y\cos\theta)-mgr\sin\theta$`
+            ] },
+            { type: 'Cálculos', dense: true, title: raw`Ecuación de Lagrange para $\theta$ ya simplificada`, columns: [
+                ['Sustituimos:', raw`$m\left(2r\dot r\dot\theta+r^2\ddot\theta-\dot r\dot y\sin\theta-r\ddot y\sin\theta-r\dot y\cos\theta\,\dot\theta\right)$`, raw`$\quad -\left[m(-\dot r\dot y\sin\theta-r\dot\theta\dot y\cos\theta)-mgr\sin\theta\right]=0$`],
+                ['Al expandir, se cancelan:', raw`$-m\dot r\dot y\sin\theta$ con $+m\dot r\dot y\sin\theta$`, raw`$-mr\dot y\cos\theta\,\dot\theta$ con $+mr\dot\theta\dot y\cos\theta$`, 'Queda', raw`$m\left(2r\dot r\dot\theta+r^2\ddot\theta-r\ddot y\sin\theta+gr\sin\theta\right)=0$`]
+            ] },
+            { type: 'Cálculos', title: raw`Forma final de la ecuación de $\theta$`, items: [
+                'Dividiendo por $r$:', raw`$\boxed{m\left(2\dot r\dot\theta+r\ddot\theta-\ddot y\sin\theta\right)=-mg\sin\theta}$`,
+                raw`Ésta coincide exactamente con la ecuación de Newton sobre $\hat{\mathbf e}_2$.`, 'Con esto queda demostrado el apartado (b).'
+            ] },
+            { type: 'Teoría', title: raw`Ecuación de Lagrange para $y$`, items: [
+                'Ahora calculamos', raw`$\dfrac{d}{dt}\left(\dfrac{\partial \mathcal L}{\partial \dot y}\right)-\dfrac{\partial \mathcal L}{\partial y}=0$`,
+                'y verificaremos que lleva a', raw`$\boxed{R\cos\theta=ky}$`
+            ] },
+            { type: 'Cálculos', dense: true, title: raw`Derivadas para la ecuación de $y$`, items: [
+                'Desde $T$:', raw`$\frac{\partial T}{\partial \dot y}=\frac12 m\left(2\dot y+2\dot r\cos\theta-2r\dot\theta\sin\theta\right)$`,
+                'luego', raw`$\frac{\partial T}{\partial \dot y}=m(\dot y+\dot r\cos\theta-r\dot\theta\sin\theta)$`,
+                'Derivando:', raw`$\frac{d}{dt}\left(\frac{\partial T}{\partial \dot y}\right)=m\left(\ddot y+\ddot r\cos\theta-\dot r\dot\theta\sin\theta-\dot r\dot\theta\sin\theta-r\ddot\theta\sin\theta-r\dot\theta^2\cos\theta\right)$`,
+                'Es decir', raw`$\boxed{\frac{d}{dt}\left(\frac{\partial T}{\partial \dot y}\right)=m\left(\ddot y+\ddot r\cos\theta-2\dot r\dot\theta\sin\theta-r\ddot\theta\sin\theta-r\dot\theta^2\cos\theta\right)}$`
+            ] },
+            { type: 'Cálculos', title: raw`Continuación de la ecuación de $y$`, items: [
+                'Como $T$ no depende explícitamente de $y$:', raw`$\frac{\partial T}{\partial y}=0$`,
+                'Del potencial:', raw`$\frac{\partial U}{\partial y}=ky-mg$`, 'El término de restricción no depende de $y$',
+                'Entonces', raw`$\frac{\partial \mathcal L}{\partial y}=-\frac{\partial U}{\partial y}=-ky+mg$`
+            ] },
+            { type: 'Cálculos', dense: true, title: raw`Ecuación de Lagrange para $y$`, items: [
+                'Sustituyendo:',
+                raw`$m\left(\ddot y+\ddot r\cos\theta-2\dot r\dot\theta\sin\theta-r\ddot\theta\sin\theta-r\dot\theta^2\cos\theta\right)-(-ky+mg)=0$`,
+                'Entonces',
+                raw`$\boxed{m\left(\ddot y+\ddot r\cos\theta-2\dot r\dot\theta\sin\theta-r\ddot\theta\sin\theta-r\dot\theta^2\cos\theta\right)+ky-mg=0}$`
+            ] },
+            { type: 'Teoría', dense: true, title: 'Comparación con Newton', items: [
+                'Ahora usamos las dos ecuaciones de Newton ya obtenidas:',
+                raw`$\boxed{m\left(\ddot r+\ddot y\cos\theta-r\dot\theta^2\right)=mg\cos\theta-R}$`,
+                raw`$\boxed{m\left(2\dot r\dot\theta+r\ddot\theta-\ddot y\sin\theta\right)=-mg\sin\theta}$`,
+                raw`Multiplicaremos la primera por $\cos\theta$ y la segunda por $-\sin\theta$, y luego sumaremos.`
+            ] },
+            { type: 'Cálculos', dense: true, title: 'Combinación lineal de las ecuaciones de Newton', columns: [
+                [raw`Primera ecuación por $\cos\theta$:`, raw`$m\left(\ddot r\cos\theta+\ddot y\cos^2\theta-r\dot\theta^2\cos\theta\right)=mg\cos^2\theta-R\cos\theta$`],
+                [raw`Segunda ecuación por $-\sin\theta$:`, raw`$m\left(-2\dot r\dot\theta\sin\theta-r\ddot\theta\sin\theta+\ddot y\sin^2\theta\right)=mg\sin^2\theta$`]
+            ] },
+            { type: 'Cálculos', dense: true, title: 'Suma de ambas ecuaciones', items: [
+                'Sumando:',
+                raw`$m\left(\ddot r\cos\theta+\ddot y\cos^2\theta-r\dot\theta^2\cos\theta-2\dot r\dot\theta\sin\theta-r\ddot\theta\sin\theta+\ddot y\sin^2\theta\right)=mg(\cos^2\theta+\sin^2\theta)-R\cos\theta$`,
+                raw`Como $\cos^2\theta+\sin^2\theta=1$, queda`,
+                raw`$\boxed{m\left(\ddot y+\ddot r\cos\theta-2\dot r\dot\theta\sin\theta-r\ddot\theta\sin\theta-r\dot\theta^2\cos\theta\right)=mg-R\cos\theta}$`
+            ] },
+            { type: 'Cálculos', dense: true, title: raw`Comparación con la ecuación de Lagrange para $y$`, items: [
+                raw`La ecuación de Lagrange para $y$ era`,
+                raw`$m\left(\ddot y+\ddot r\cos\theta-2\dot r\dot\theta\sin\theta-r\ddot\theta\sin\theta-r\dot\theta^2\cos\theta\right)+ky-mg=0$`,
+                'Es decir',
+                raw`$m\left(\ddot y+\ddot r\cos\theta-2\dot r\dot\theta\sin\theta-r\ddot\theta\sin\theta-r\dot\theta^2\cos\theta\right)=mg-ky$`,
+                'Comparando con el resultado obtenido desde Newton:', raw`$mg-R\cos\theta=mg-ky$`, 'Luego', raw`$\boxed{R\cos\theta=ky}$`
+            ] },
+            { type: 'Conclusión', title: 'Resultado del apartado (c)', items: [
+                'La ecuación de Lagrange para la variable $y$ es completamente equivalente a la ecuación del resorte:',
+                raw`$\boxed{R\cos\theta=ky}$`,
+                'Esto demuestra que el multiplicador $R$ introducido en la restricción coincide físicamente con la tensión de la cuerda.'
+            ] },
+            { type: 'Cierre', title: 'Cierre', items: [
+                raw`Se obtuvo el sistema por Newton en la base móvil $\hat{\mathbf e}_1,\hat{\mathbf e}_2$.`,
+                raw`Se construyó el lagrangiano con la restricción $r-l=0$.`,
+                raw`Se derivaron las ecuaciones de Euler–Lagrange para $r$, $\theta$ e $y$.`, 'Se verificó:',
+                raw`la ecuación en $r$ coincide con Newton sobre $\hat{\mathbf e}_1$`,
+                raw`la ecuación en $\theta$ coincide con Newton sobre $\hat{\mathbf e}_2$`,
+                raw`la ecuación en $y$ equivale a la ecuación del resorte`, raw`$\boxed{R\cos\theta=ky}$`
+            ] }
+        ];
+
+        const deck = document.getElementById('deck');
+        let currentSlide = 0;
+
+        function createLine(text) {
+            const div = document.createElement('div');
+            div.className = text.includes('$') ? 'equation-line' : 'math-line';
+            div.textContent = text;
+            return div;
+        }
+
+        function createSlide(data, index) {
+            const slide = document.createElement('div');
+            slide.className = `slide ${data.dense ? 'dense' : ''}`;
+            const content = document.createElement('div');
+            content.className = 'slide-content';
+
+            if (data.type === 'Portada') {
+                const h1 = document.createElement('h1');
+                h1.className = 'portada-title';
+                h1.textContent = data.title;
+                const subtitle = document.createElement('p');
+                subtitle.className = 'portada-subtitle';
+                subtitle.textContent = data.subtitle;
+                const divider = document.createElement('div');
+                divider.className = 'divider';
+                content.append(h1, subtitle, divider);
+            } else {
+                const h1 = document.createElement('h1');
+                h1.className = 'slide-title';
+                h1.textContent = data.title;
+                content.appendChild(h1);
+
+                if (data.columns) {
+                    const grid = document.createElement('div');
+                    grid.className = 'two-column';
+                    data.columns.forEach((columnLines) => {
+                        const column = document.createElement('div');
+                        column.className = 'column';
+                        columnLines.forEach((line) => column.appendChild(createLine(line)));
+                        grid.appendChild(column);
+                    });
+                    content.appendChild(grid);
+                } else {
+                    const list = document.createElement('ul');
+                    list.className = 'content-list';
+                    data.items.forEach((item) => {
+                        const li = document.createElement('li');
+                        li.textContent = item;
+                        if (item.includes('\\boxed')) li.classList.add('boxed-line');
+                        list.appendChild(li);
+                    });
+                    content.appendChild(list);
+                }
+            }
+
+            slide.appendChild(content);
+            if (index === 0) slide.classList.add('present');
+            else slide.classList.add('future');
+            return slide;
+        }
+
+        slidesData.forEach((data, index) => deck.appendChild(createSlide(data, index)));
+
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const totalSlides = slides.length;
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function prepareFragments() {
+            slides.forEach((slide) => {
+                slide.querySelectorAll('.content-list li, .equation-line, .math-line').forEach((element) => {
+                    element.classList.add('fragment');
+                });
+            });
+        }
+
+        function getFragments(slide) {
+            return Array.from(slide.querySelectorAll('.fragment'));
+        }
+
+        function revealAll(slide) {
+            getFragments(slide).forEach((fragment) => fragment.classList.add('visible'));
+        }
+
+        function resetFragments(slide) {
+            getFragments(slide).forEach((fragment) => fragment.classList.remove('visible'));
+        }
+
+        function showSlide(n) {
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides.forEach((slide, index) => {
+                slide.classList.remove('past', 'present', 'future');
+                if (index < currentSlide) slide.classList.add('past');
+                else if (index === currentSlide) slide.classList.add('present');
+                else slide.classList.add('future');
+            });
+            resetFragments(slides[currentSlide]);
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+        }
+
+        function nextSlide() {
+            const fragments = getFragments(slides[currentSlide]);
+            const nextFragment = fragments.find((fragment) => !fragment.classList.contains('visible'));
+            if (nextFragment) {
+                nextFragment.classList.add('visible');
+                return;
+            }
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            const fragments = getFragments(slides[currentSlide]);
+            const visibleFragments = fragments.filter((fragment) => fragment.classList.contains('visible'));
+            if (visibleFragments.length > 0) {
+                visibleFragments[visibleFragments.length - 1].classList.remove('visible');
+                return;
+            }
+            showSlide(currentSlide - 1);
+            revealAll(slides[currentSlide]);
+        }
+
+        document.getElementById('next-btn').addEventListener('click', nextSlide);
+        document.getElementById('prev-btn').addEventListener('click', prevSlide);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('button, a')) return;
+            if (e.target.closest('.slide.present')) nextSlide();
+        });
+
+        prepareFragments();
+        showSlide(0);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ],
+                throwOnError: false
+            });
+        });
+    </script>
+</body>
+</html>
