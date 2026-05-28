@@ -8,20 +8,9 @@ body {
   margin: 0;
 }
 
-.slide {
-  --deck-content-scale: 1;
-}
-
 .slide > .inner,
 .slide > .slide-content {
   max-width: min(100%, var(--deck-content-max-width, 1200px));
-  transform: scale(var(--deck-content-scale));
-  transform-origin: center center;
-}
-
-.slide.deck-overflow-risk > .inner,
-.slide.deck-overflow-risk > .slide-content {
-  transform-origin: center top;
 }
 
 .slide .katex-display,
@@ -40,11 +29,6 @@ body {
 
 .slide .katex {
   max-width: 100%;
-}
-
-.slide .deck-fit-target {
-  transform: scale(var(--deck-equation-scale, 1));
-  transform-origin: center center;
 }
 
 .slide-counter[data-deck-sync],

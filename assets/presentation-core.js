@@ -1,9 +1,7 @@
 (function () {
   const DEFAULT_OPTIONS = {
     loop: false,
-    fit: true,
-    minScale: 0.52,
-    fitPadding: 28,
+    fit: false,
     katexDelimiters: [
       { left: '$$', right: '$$', display: true },
       { left: '$', right: '$', display: false },
@@ -21,9 +19,6 @@
       this.counterCurrent = document.getElementById('cur') || document.getElementById('current-slide');
       this.counterTotal = document.getElementById('total-slides');
       this.progress = document.getElementById('pb');
-      this.resizeFrame = 0;
-      this.fitFrame = 0;
-      this.fittedSlides = new WeakSet();
     }
 
     start() {
@@ -34,9 +29,6 @@
       this.bindEvents();
       this.update({ resetFragments: false });
 
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(() => this.fitCurrentSlide());
-      }
     }
 
     findInitialSlide() {
@@ -72,13 +64,6 @@
         throwOnError: false
       });
 
-      this.prepareMathForFitting();
-    }
-
-    prepareMathForFitting() {
-      document.querySelectorAll('.katex-display').forEach((node) => {
-        node.classList.add('deck-fit-target');
-      });
     }
 
     bindEvents() {
@@ -114,12 +99,6 @@
         if (event.target.closest('.slide.present, .slide.active')) {
           this.next();
         }
-      });
-
-      window.addEventListener('resize', () => {
-        window.cancelAnimationFrame(this.resizeFrame);
-        this.fittedSlides = new WeakSet();
-        this.resizeFrame = window.requestAnimationFrame(() => this.scheduleFit({ force: true }));
       });
     }
 
@@ -206,7 +185,10 @@
       }
 
       this.updateCounters();
-      this.scheduleFit();
+    }
+
+    getActiveSlide() {
+      return this.slides[this.current];
     }
 
     updateCounters() {
@@ -216,63 +198,6 @@
       if (this.progress) {
         const divisor = Math.max(1, this.slides.length - 1);
         this.progress.style.width = `${(this.current / divisor) * 100}%`;
-      }
-    }
-
-    fitCurrentSlide() {
-      if (!this.options.fit) return;
-
-      const slide = this.slides[this.current];
-      if (!slide) return;
-
-      this.fitBlockMath(slide);
-      this.fitSlideContent(slide);
-      this.fittedSlides.add(slide);
-    }
-
-    scheduleFit(options) {
-      if (!this.options.fit) return;
-
-      const slide = this.slides[this.current];
-      if (!slide) return;
-      if (!options?.force && this.fittedSlides.has(slide)) return;
-
-      window.cancelAnimationFrame(this.fitFrame);
-      this.fitFrame = window.requestAnimationFrame(() => this.fitCurrentSlide());
-    }
-
-    fitBlockMath(slide) {
-      slide.querySelectorAll('.deck-fit-target').forEach((node) => {
-        node.style.setProperty('--deck-equation-scale', '1');
-        const parentWidth = Math.max(1, node.parentElement ? node.parentElement.clientWidth : slide.clientWidth);
-        const overflowRatio = node.scrollWidth / parentWidth;
-        const scale = overflowRatio > 1 ? Math.max(0.62, 1 / overflowRatio) : 1;
-        node.style.setProperty('--deck-equation-scale', scale.toFixed(3));
-      });
-    }
-
-    fitSlideContent(slide) {
-      const content = slide.querySelector(':scope > .inner, :scope > .slide-content');
-      if (!content) return;
-
-      slide.classList.remove('deck-overflow-risk');
-      slide.style.setProperty('--deck-content-scale', '1');
-
-      const slideStyle = window.getComputedStyle(slide);
-      const horizontalPadding = Number.parseFloat(slideStyle.paddingLeft) + Number.parseFloat(slideStyle.paddingRight);
-      const verticalPadding = Number.parseFloat(slideStyle.paddingTop) + Number.parseFloat(slideStyle.paddingBottom);
-      const availableWidth = Math.max(1, slide.clientWidth - horizontalPadding - this.options.fitPadding);
-      const availableHeight = Math.max(1, slide.clientHeight - verticalPadding - this.options.fitPadding);
-
-      const contentWidth = Math.max(content.scrollWidth, content.getBoundingClientRect().width);
-      const contentHeight = Math.max(content.scrollHeight, content.getBoundingClientRect().height);
-      const widthScale = availableWidth / Math.max(1, contentWidth);
-      const heightScale = availableHeight / Math.max(1, contentHeight);
-      const scale = Math.max(this.options.minScale, Math.min(1, widthScale, heightScale));
-
-      if (scale < 0.995) {
-        slide.classList.add('deck-overflow-risk');
-        slide.style.setProperty('--deck-content-scale', scale.toFixed(3));
       }
     }
   }
