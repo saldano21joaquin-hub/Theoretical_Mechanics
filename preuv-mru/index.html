@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PREUV — Movimiento Rectilíneo Uniforme</title>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #ffffff;
+            color: #2c2c2c;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            inset: 0;
+            padding: 38px 52px 100px;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #ffffff 0%, #f5f1e8 100%);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: transform 0.58s cubic-bezier(0.26, 0.86, 0.44, 0.985), opacity 0.32s ease;
+            pointer-events: none;
+        }
+
+        .slide.present {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        .slide.past {
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+
+        .slide.future {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+
+        .slide::after {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            right: 18px;
+            bottom: 92px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .slide-content {
+            position: relative;
+            z-index: 1;
+            width: min(1180px, 100%);
+            text-align: center;
+        }
+
+        .eyebrow {
+            color: #b78b4d;
+            font-size: 0.98rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .slide-title {
+            color: #2c2c2c;
+            font-size: 2.15rem;
+            line-height: 1.18;
+            margin-bottom: 20px;
+        }
+
+        .portada-title {
+            font-size: 3.3rem;
+            line-height: 1.1;
+            margin-bottom: 18px;
+        }
+
+        .portada-subtitle {
+            color: #5a5a5a;
+            font-size: 1.42rem;
+            line-height: 1.45;
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        .divider {
+            width: 190px;
+            height: 3px;
+            margin: 28px auto;
+            background: linear-gradient(to right, transparent, #e0a456, transparent);
+        }
+
+        .content-list {
+            list-style: none;
+            max-width: 1020px;
+            margin: 0 auto;
+            text-align: left;
+            font-size: 1.16rem;
+            line-height: 1.58;
+        }
+
+        .content-list li {
+            position: relative;
+            margin-bottom: 8px;
+            padding-left: 24px;
+        }
+
+        .content-list li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: #b78b4d;
+        }
+
+        .content-list li:has(.katex),
+        .content-list li.boxed-line {
+            padding-left: 0;
+            text-align: center;
+        }
+
+        .content-list li:has(.katex)::before,
+        .content-list li.boxed-line::before {
+            content: '';
+        }
+
+        .boxed-line {
+            margin: 18px auto 0;
+            padding-top: 12px;
+            border-top: 1px solid rgba(224, 164, 86, 0.35);
+            font-weight: 700;
+        }
+
+        .visual {
+            margin: 26px auto 0;
+            width: min(780px, 95%);
+        }
+
+        .visual svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .compact .slide-title { font-size: 1.82rem; }
+        .compact .content-list { font-size: 1.02rem; line-height: 1.42; }
+
+        .fragment {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.24s ease, transform 0.24s ease;
+        }
+
+        .fragment.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 28px;
+            left: 48px;
+            z-index: 10;
+            color: #888888;
+            font-family: monospace;
+            font-size: 0.98rem;
+        }
+
+        .navigation {
+            position: fixed;
+            right: 48px;
+            bottom: 22px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-button {
+            width: 42px;
+            height: 34px;
+            border: 1px solid #d8d8d8;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.92);
+            color: #2c2c2c;
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+
+        .nav-button:hover { background: #f5f1e8; }
+        .katex-display { margin: 0.22em 0; overflow-x: auto; overflow-y: hidden; }
+
+        @media (max-width: 900px) {
+            .slide { padding: 32px 24px 92px; }
+            .slide-title { font-size: 1.55rem; }
+            .portada-title { font-size: 2.35rem; }
+            .content-list { font-size: 0.98rem; }
+            .navigation { right: 24px; }
+            .slide-counter { left: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container" id="deck"></div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">30</span>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-button" id="prev-btn">←</button>
+        <button class="nav-button" id="next-btn">→</button>
+    </div>
+
+    <script>
+        const raw = String.raw;
+        const slidesData = [
+            { type: 'Portada', title: 'Movimiento Rectilíneo Uniforme', subtitle: '¿Cómo transformamos el movimiento real en una descripción matemática?' },
+            { title: '¿Cómo describimos el movimiento?', items: [
+                raw`$\boxed{\text{¿Qué significa decir que algo se mueve?}}$`,
+                'Movimiento = cambio de posición respecto de una referencia.',
+                raw`$\boxed{\text{Movimiento}=\text{cambio de posición respecto de una referencia}}$`
+            ], visual: 'ball' },
+            { title: 'La posición no existe sola', items: [
+                raw`$\boxed{\text{Toda posición es relativa a una referencia}}$`,
+                'Una persona sentada en un bus está en reposo respecto del asiento.',
+                'La misma persona está en movimiento respecto de la calle.',
+                'No hay contradicción: cambiamos el sistema de referencia.'
+            ], visual: 'bus' },
+            { title: 'El sistema de referencia', items: [
+                'Un sistema de referencia necesita:',
+                raw`$\boxed{\text{origen}+\text{dirección}+\text{sentido}+\text{unidad}+\text{reloj}}$`,
+                raw`$x=0$`,
+                raw`$\text{hacia la derecha}\longrightarrow x>0$`,
+                raw`$\text{hacia la izquierda}\longrightarrow x<0$`
+            ], visual: 'axis' },
+            { title: 'Convertir el espacio en números', items: [
+                raw`$\text{lugar físico}\longrightarrow\text{número}$`,
+                raw`$P\longrightarrow x(P)$`,
+                raw`$\boxed{\text{Una coordenada es una etiqueta numérica para una posición}}$`
+            ], visual: 'numberline' },
+            { title: '¿Por qué usamos una recta?', items: [
+                raw`$\boxed{\text{movimiento en una sola dimensión}}$`,
+                raw`$\text{realidad compleja}\longrightarrow\text{modelo simplificado}$`,
+                'En MRU suponemos que una coordenada $x$ basta para describir el movimiento.'
+            ], visual: 'road' },
+            { title: 'Geometría euclidiana', compact: true, items: [
+                raw`$\boxed{\text{un espacio plano}}$`,
+                'Una recta puede prolongarse indefinidamente.',
+                'Por dos puntos pasa una única recta.',
+                'El camino recto es el camino más corto.',
+                raw`$d=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}$`,
+                raw`$d=|x_2-x_1|$ en una dimensión.`
+            ], visual: 'triangle' },
+            { title: '¿La Tierra es plana?', items: [
+                raw`$\boxed{\text{No globalmente, pero puede aproximarse como plana localmente}}$`,
+                raw`$\boxed{\text{pequeña región}\Rightarrow\text{aproximación plana}}$`,
+                'No afirmamos que la Tierra sea plana: usamos una aproximación local.'
+            ], visual: 'localflat' },
+            { title: 'Cuando el plano deja de funcionar', compact: true, items: [
+                raw`$\boxed{\text{En espacios curvos cambian las reglas geométricas}}$`,
+                'En una esfera, el camino más corto es un arco de círculo máximo.',
+                raw`$\text{latitud},\qquad \text{longitud}$`,
+                raw`$\boxed{\text{El MRU escolar supone un espacio localmente plano}}$`
+            ], visual: 'sphere' },
+            { title: 'Espacio físico y espacio-tiempo', compact: true, items: [
+                raw`$\boxed{\text{espacio euclidiano}+\text{tiempo universal}}$`,
+                'Funciona bien para automóviles, personas, pelotas, trenes y movimientos cotidianos.',
+                raw`$\text{velocidades pequeñas comparadas con }c$`,
+                raw`$\text{regiones pequeñas}$`,
+                raw`$\text{campos gravitatorios no extremos}$`
+            ] },
+            { title: '¿Qué es un gráfico?', items: [
+                raw`$\boxed{\text{Un gráfico representa la relación entre variables}}$`,
+                'En un gráfico posición-tiempo, el eje horizontal es el tiempo.',
+                'El eje vertical es la posición.',
+                raw`$(3\,\text{s},12\,\text{m})$ significa: a los $3\,\text{s}$, la posición era $12\,\text{m}$.`,
+                raw`$\boxed{\text{Un gráfico es un espacio de información}}$`
+            ], visual: 'pointgraph' },
+            { title: '¿Por qué el tiempo va en el eje horizontal?', items: [
+                raw`$t\longrightarrow \text{variable independiente}$`,
+                raw`$x(t)\longrightarrow \text{variable dependiente}$`,
+                raw`$x(t)$ se lee: posición en función del tiempo.`,
+                raw`$x(0),\qquad x(1),\qquad x(2)$`
+            ], visual: 'function' },
+            { title: '¿Existen otros tipos de gráficos?', compact: true, items: [
+                raw`$\boxed{\text{Sí. Elegimos la representación según el problema}}$`,
+                raw`$(x,y)$, coordenadas polares $(r,\theta)$, coordenadas esféricas.`,
+                'Para movimiento recto, $x$ es suficiente.',
+                raw`Para movimiento circular, pueden ser naturales $r,\theta$.`,
+                'La descripción cambia; el fenómeno físico no.'
+            ], visual: 'coordinates' },
+            { title: 'Movimiento como función', items: [
+                raw`$\boxed{x=x(t)}$`,
+                raw`$\begin{array}{c|ccccc}t\,(\text{s})&0&1&2&3&4\\\hline x\,(\text{m})&2&5&8&11&14\end{array}$`,
+                raw`$t\longmapsto x(t)$`,
+                'Entrada: tiempo. Salida: posición.'
+            ] },
+            { title: '¿Qué está cambiando?', items: [
+                raw`$\Delta x=x_f-x_i$`,
+                raw`$\Delta t=t_f-t_i$`,
+                raw`$x_i=2\,\text{m},\quad x_f=8\,\text{m}\Rightarrow \Delta x=6\,\text{m}$`,
+                raw`$t_i=0\,\text{s},\quad t_f=2\,\text{s}\Rightarrow \Delta t=2\,\text{s}$`
+            ], visual: 'delta' },
+            { title: 'Razón de cambio', items: [
+                raw`$\boxed{v=\frac{\Delta x}{\Delta t}}$`,
+                raw`$v=\frac{6\,\text{m}}{2\,\text{s}}=3\,\frac{\text{m}}{\text{s}}$`,
+                raw`$v>0$ posición aumenta.`,
+                raw`$v<0$ posición disminuye.`,
+                raw`$v=0$ posición no cambia.`
+            ] },
+            { title: '¿Qué hace uniforme al MRU?', items: [
+                raw`$\boxed{\frac{\Delta x}{\Delta t}=\text{constante}}$`,
+                raw`$5-2=3,\quad 8-5=3,\quad 11-8=3,\quad 14-11=3$`,
+                raw`$\frac{\Delta x}{\Delta t}=3\,\frac{\text{m}}{\text{s}}$ en todos los intervalos.`,
+                'Uniforme significa razón de cambio constante.'
+            ] },
+            { title: 'Construcción de la ecuación', compact: true, items: [
+                raw`$v=\frac{x-x_0}{t-t_0}$`,
+                raw`$\Delta x=x-x_0,\qquad \Delta t=t-t_0$`,
+                raw`$v(t-t_0)=x-x_0$`,
+                raw`$x=x_0+v(t-t_0)$`,
+                raw`Si $t_0=0$, entonces`,
+                raw`$\boxed{x(t)=x_0+vt}$`
+            ] },
+            { title: '¿Qué significa cada término?', items: [
+                raw`$\boxed{x(t)=x_0+vt}$`,
+                raw`$x(t)$: posición en el instante $t$.`,
+                raw`$x_0$: posición inicial.`,
+                raw`$v$: cambio de posición por unidad de tiempo.`,
+                raw`$vt$: cambio acumulado de posición.`,
+                raw`$\boxed{\text{posición final}=\text{posición inicial}+\text{cambio de posición}}$`
+            ] },
+            { title: 'Es una función afín', items: [
+                raw`$\text{Matemática:}\qquad y=mx+b$`,
+                raw`$\text{Cinemática:}\qquad x=vt+x_0$`,
+                raw`$m\longleftrightarrow v$`,
+                raw`$b\longleftrightarrow x_0$`,
+                'La posición inicial es el corte. La velocidad es la inclinación.'
+            ], visual: 'affine' },
+            { title: 'La pendiente es una razón de cambio', items: [
+                raw`$\boxed{\text{pendiente}=\frac{\text{cambio vertical}}{\text{cambio horizontal}}}$`,
+                raw`$\boxed{v=\frac{\Delta x}{\Delta t}}$`,
+                raw`$\boxed{\text{la velocidad es la pendiente del gráfico posición-tiempo}}$`
+            ], visual: 'slopes' },
+            { title: 'Tres movimientos posibles', items: [
+                raw`$v>0\Rightarrow x(t)\text{ aumenta}$`,
+                raw`$v=0\Rightarrow x(t)\text{ permanece constante}$`,
+                raw`$v<0\Rightarrow x(t)\text{ disminuye}$`,
+                raw`$v=4\,\frac{\text{m}}{\text{s}}$ hacia el sentido positivo.`,
+                raw`$v=-4\,\frac{\text{m}}{\text{s}}$ hacia el sentido negativo.`,
+                raw`$|v|=4\,\frac{\text{m}}{\text{s}}$`
+            ], visual: 'threegraphs' },
+            { title: 'El gráfico no es el camino', items: [
+                raw`$\boxed{\text{trayectoria física}\neq\text{gráfico }x\text{-}t}$`,
+                'La forma del gráfico representa cómo cambia la posición con el tiempo.',
+                'Una recta inclinada en $x$-$t$ no significa que el móvil suba una pendiente física.'
+            ], visual: 'pathvsgraph' },
+            { title: 'Ejemplo completo', items: [
+                raw`$x(t)=10-2t$`,
+                raw`$x_0=?\qquad v=?\qquad x(3)=?$`,
+                raw`$x_0=10\,\text{m}$`,
+                raw`$v=-2\,\frac{\text{m}}{\text{s}}$`,
+                raw`$x(3)=10-2(3)=4\,\text{m}$`,
+                'La posición disminuyó $6\,\\text{m}$ en tres segundos.'
+            ] },
+            { title: 'Pregunta conceptual', items: [
+                raw`$x(t)=5\,\text{m}$ para todo $t$.`,
+                '¿Está en el origen?',
+                'No necesariamente.',
+                raw`$x=5\,\text{m}$ constante.`,
+                raw`$v=0$`,
+                raw`$\boxed{\text{posición}\neq\text{velocidad}}$`
+            ] },
+            { title: 'El origen no tiene que ser el inicio del movimiento', items: [
+                raw`$\boxed{x_0\neq 0\text{ en general}}$`,
+                raw`$x=0$ es una elección espacial.`,
+                raw`$t=0$ es una elección temporal.`,
+                'El objeto puede comenzar lejos del origen.'
+            ], visual: 'origin' },
+            { title: 'Galileo, Newton y el MRU', compact: true, items: [
+                raw`$\boxed{\text{Galileo: describir el movimiento}}$`,
+                raw`$\boxed{\text{Newton: formular leyes generales}}$`,
+                raw`$x=x_0+vt$ no aparece como una fórmula mágica.`,
+                'Expresa velocidad constante en una dimensión.',
+                raw`$\text{observaciones}\longrightarrow\text{conceptos}\longrightarrow\text{mediciones}\longrightarrow\text{relaciones matemáticas}$`
+            ] },
+            { title: '¿Qué describe y qué no describe el MRU?', items: [
+                raw`$\boxed{\text{cómo cambia la posición}}$`,
+                raw`$\boxed{\text{no explica todavía por qué cambia el movimiento}}$`,
+                'La cinemática describe el movimiento.',
+                'La dinámica estudia sus causas.'
+            ] },
+            { title: 'Cierre', items: [
+                raw`$\boxed{\text{realidad}\rightarrow\text{referencia}\rightarrow\text{coordenadas}\rightarrow\text{mediciones}\rightarrow\text{función}}$`,
+                raw`$\boxed{v=\frac{\Delta x}{\Delta t}\quad\Longrightarrow\quad x(t)=x_0+vt}$`,
+                'La fórmula final es la última etapa, no la primera.'
+            ] },
+            { title: 'Frase final', items: [
+                raw`$\boxed{\text{Una fórmula física no es algo que hay que creer.}}$`,
+                raw`$\boxed{\text{Es una relación que debemos aprender a construir e interpretar.}}$`
+            ] }
+        ];
+
+        const visuals = {
+            ball: `<svg viewBox="0 0 760 240"><line x1="90" y1="168" x2="660" y2="168" stroke="#2c2c2c" stroke-width="3"/><circle cx="210" cy="128" r="28" fill="#e0a456" stroke="#2c2c2c" stroke-width="3"/><circle cx="510" cy="128" r="28" fill="#e0a456" opacity="0.35" stroke="#2c2c2c" stroke-width="3"/><path d="M250 128 C330 86 420 86 488 128" fill="none" stroke="#b78b4d" stroke-width="4" stroke-dasharray="8 8"/><text x="180" y="210" font-size="24">antes</text><text x="486" y="210" font-size="24">ahora</text></svg>`,
+            bus: `<svg viewBox="0 0 760 250"><rect x="135" y="82" width="490" height="92" rx="14" fill="#f5f1e8" stroke="#2c2c2c" stroke-width="3"/><circle cx="230" cy="184" r="22" fill="#2c2c2c"/><circle cx="530" cy="184" r="22" fill="#2c2c2c"/><circle cx="365" cy="125" r="18" fill="#e0a456"/><text x="285" y="222" font-size="23">reposo respecto del asiento</text><path d="M120 55 H650" stroke="#b78b4d" stroke-width="4" marker-end="url(#a)"/><defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#b78b4d"/></marker></defs></svg>`,
+            axis: `<svg viewBox="0 0 760 250"><line x1="90" y1="125" x2="670" y2="125" stroke="#2c2c2c" stroke-width="4"/><polygon points="670,125 650,114 650,136" fill="#2c2c2c"/><circle cx="380" cy="125" r="8" fill="#e0a456"/><text x="362" y="160" font-size="24">0</text><text x="560" y="98" font-size="24">positivo</text><text x="140" y="98" font-size="24">negativo</text><text x="340" y="70" font-size="22">origen</text></svg>`,
+            numberline: `<svg viewBox="0 0 760 230"><line x1="90" y1="118" x2="670" y2="118" stroke="#2c2c2c" stroke-width="3"/><g font-size="24" text-anchor="middle"><text x="130" y="158">-3</text><text x="213" y="158">-2</text><text x="296" y="158">-1</text><text x="380" y="158">0</text><text x="463" y="158">1</text><text x="546" y="158">2</text><text x="630" y="158">3</text></g><circle cx="546" cy="84" r="12" fill="#e0a456"/><text x="522" y="55" font-size="24">P</text></svg>`,
+            road: `<svg viewBox="0 0 760 230"><path d="M85 170 C250 95 500 95 675 170" fill="none" stroke="#c8c8c8" stroke-width="22"/><path d="M110 170 H650" stroke="#2c2c2c" stroke-width="5"/><circle cx="500" cy="170" r="20" fill="#e0a456" stroke="#2c2c2c" stroke-width="3"/><text x="360" y="210" font-size="24">modelo 1D</text></svg>`,
+            triangle: `<svg viewBox="0 0 760 270"><polygon points="180,210 580,210 580,70" fill="none" stroke="#2c2c2c" stroke-width="4"/><line x1="180" y1="210" x2="580" y2="70" stroke="#e0a456" stroke-width="4"/><text x="365" y="236" font-size="24">Δx</text><text x="600" y="145" font-size="24">Δy</text><text x="340" y="125" font-size="26">d</text></svg>`,
+            localflat: `<svg viewBox="0 0 760 270"><circle cx="380" cy="310" r="250" fill="#f5f1e8" stroke="#2c2c2c" stroke-width="4"/><rect x="280" y="65" width="200" height="70" fill="#ffffff" stroke="#e0a456" stroke-width="4"/><text x="290" y="55" font-size="24">región pequeña</text><line x1="300" y1="120" x2="460" y2="120" stroke="#2c2c2c" stroke-width="3"/></svg>`,
+            sphere: `<svg viewBox="0 0 760 300"><circle cx="380" cy="150" r="110" fill="#f5f1e8" stroke="#2c2c2c" stroke-width="4"/><ellipse cx="380" cy="150" rx="110" ry="38" fill="none" stroke="#aaa" stroke-width="2"/><path d="M300 210 Q380 35 470 210 Q385 170 300 210" fill="rgba(224,164,86,0.16)" stroke="#e0a456" stroke-width="4"/><text x="288" y="255" font-size="24">triángulo sobre esfera</text></svg>`,
+            pointgraph: `<svg viewBox="0 0 760 300"><line x1="110" y1="240" x2="650" y2="240" stroke="#2c2c2c" stroke-width="3"/><line x1="110" y1="240" x2="110" y2="50" stroke="#2c2c2c" stroke-width="3"/><circle cx="410" cy="120" r="9" fill="#e0a456"/><line x1="410" y1="240" x2="410" y2="120" stroke="#aaa" stroke-dasharray="6 6"/><line x1="110" y1="120" x2="410" y2="120" stroke="#aaa" stroke-dasharray="6 6"/><text x="395" y="272" font-size="22">3 s</text><text x="42" y="126" font-size="22">12 m</text><text x="645" y="270" font-size="22">t</text><text x="82" y="55" font-size="22">x</text></svg>`,
+            function: `<svg viewBox="0 0 760 230"><rect x="120" y="72" width="160" height="86" rx="8" fill="#ffffff" stroke="#2c2c2c" stroke-width="3"/><rect x="480" y="72" width="160" height="86" rx="8" fill="#ffffff" stroke="#2c2c2c" stroke-width="3"/><path d="M290 115 H470" stroke="#e0a456" stroke-width="5" marker-end="url(#b)"/><defs><marker id="b" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#e0a456"/></marker></defs><text x="185" y="125" font-size="34">t</text><text x="535" y="125" font-size="34">x(t)</text></svg>`,
+            coordinates: `<svg viewBox="0 0 760 260"><line x1="120" y1="205" x2="330" y2="205" stroke="#2c2c2c" stroke-width="3"/><line x1="120" y1="205" x2="120" y2="55" stroke="#2c2c2c" stroke-width="3"/><circle cx="235" cy="120" r="8" fill="#e0a456"/><line x1="470" y1="205" x2="620" y2="80" stroke="#e0a456" stroke-width="4"/><circle cx="470" cy="205" r="5" fill="#2c2c2c"/><path d="M520 205 A50 50 0 0 0 508 174" fill="none" stroke="#2c2c2c" stroke-width="3"/><text x="228" y="102" font-size="24">(x,y)</text><text x="548" y="150" font-size="24">r</text><text x="523" y="198" font-size="24">θ</text></svg>`,
+            delta: `<svg viewBox="0 0 760 230"><line x1="110" y1="130" x2="650" y2="130" stroke="#2c2c2c" stroke-width="3"/><circle cx="250" cy="130" r="10" fill="#e0a456"/><circle cx="470" cy="130" r="10" fill="#e0a456"/><path d="M250 95 H470" stroke="#b78b4d" stroke-width="4" marker-end="url(#c)"/><defs><marker id="c" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#b78b4d"/></marker></defs><text x="235" y="168" font-size="24">xᵢ</text><text x="455" y="168" font-size="24">x_f</text><text x="330" y="82" font-size="24">Δx</text></svg>`,
+            affine: `<svg viewBox="0 0 760 300"><line x1="110" y1="240" x2="650" y2="240" stroke="#2c2c2c" stroke-width="3"/><line x1="110" y1="240" x2="110" y2="55" stroke="#2c2c2c" stroke-width="3"/><line x1="110" y1="190" x2="620" y2="70" stroke="#e0a456" stroke-width="5"/><text x="88" y="194" font-size="22">x₀</text><text x="520" y="110" font-size="24">pendiente = v</text></svg>`,
+            slopes: `<svg viewBox="0 0 760 300"><line x1="100" y1="245" x2="660" y2="245" stroke="#2c2c2c" stroke-width="3"/><line x1="100" y1="245" x2="100" y2="55" stroke="#2c2c2c" stroke-width="3"/><line x1="130" y1="210" x2="610" y2="80" stroke="#e0a456" stroke-width="5"/><line x1="245" y1="178" x2="420" y2="178" stroke="#777" stroke-dasharray="6 6"/><line x1="420" y1="178" x2="420" y2="130" stroke="#777" stroke-dasharray="6 6"/><text x="310" y="202" font-size="22">Δt</text><text x="430" y="158" font-size="22">Δx</text></svg>`,
+            threegraphs: `<svg viewBox="0 0 760 300"><g stroke="#2c2c2c" stroke-width="2"><line x1="60" y1="240" x2="220" y2="240"/><line x1="60" y1="240" x2="60" y2="70"/><line x1="300" y1="240" x2="460" y2="240"/><line x1="300" y1="240" x2="300" y2="70"/><line x1="540" y1="240" x2="700" y2="240"/><line x1="540" y1="240" x2="540" y2="70"/></g><line x1="75" y1="215" x2="205" y2="95" stroke="#e0a456" stroke-width="4"/><line x1="315" y1="150" x2="445" y2="150" stroke="#e0a456" stroke-width="4"/><line x1="555" y1="95" x2="685" y2="215" stroke="#e0a456" stroke-width="4"/><text x="100" y="278" font-size="23">v &gt; 0</text><text x="340" y="278" font-size="23">v = 0</text><text x="580" y="278" font-size="23">v &lt; 0</text></svg>`,
+            pathvsgraph: `<svg viewBox="0 0 760 270"><line x1="80" y1="110" x2="330" y2="110" stroke="#2c2c2c" stroke-width="5"/><circle cx="235" cy="110" r="17" fill="#e0a456"/><line x1="440" y1="210" x2="690" y2="210" stroke="#2c2c2c" stroke-width="3"/><line x1="440" y1="210" x2="440" y2="60" stroke="#2c2c2c" stroke-width="3"/><line x1="460" y1="190" x2="670" y2="75" stroke="#e0a456" stroke-width="4"/><text x="118" y="160" font-size="24">trayectoria real</text><text x="505" y="245" font-size="24">gráfico x-t</text></svg>`,
+            origin: `<svg viewBox="0 0 760 230"><line x1="100" y1="125" x2="660" y2="125" stroke="#2c2c2c" stroke-width="3"/><circle cx="300" cy="125" r="8" fill="#2c2c2c"/><circle cx="520" cy="125" r="14" fill="#e0a456"/><text x="285" y="165" font-size="24">x=0</text><text x="488" y="92" font-size="24">x₀=20 m</text><text x="340" y="195" font-size="22">el móvil no tiene que partir en el origen</text></svg>`
+        };
+
+        const deck = document.getElementById('deck');
+        let currentSlide = 0;
+
+        function createSlide(data, index) {
+            const slide = document.createElement('div');
+            slide.className = `slide ${data.compact ? 'compact' : ''}`;
+            const content = document.createElement('div');
+            content.className = 'slide-content';
+
+            if (data.type === 'Portada') {
+                const h1 = document.createElement('h1');
+                h1.className = 'portada-title';
+                h1.textContent = data.title;
+                const sub = document.createElement('p');
+                sub.className = 'portada-subtitle';
+                sub.textContent = data.subtitle;
+                const divider = document.createElement('div');
+                divider.className = 'divider';
+                content.append(h1, sub, divider);
+            } else {
+                const eyebrow = document.createElement('div');
+                eyebrow.className = 'eyebrow';
+                eyebrow.textContent = 'MRU';
+                const h1 = document.createElement('h1');
+                h1.className = 'slide-title';
+                h1.textContent = data.title;
+                const list = document.createElement('ul');
+                list.className = 'content-list';
+                data.items.forEach((item) => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    if (item.includes('\\boxed')) li.classList.add('boxed-line');
+                    list.appendChild(li);
+                });
+                content.append(eyebrow, h1, list);
+            }
+
+            if (data.visual && visuals[data.visual]) {
+                const visual = document.createElement('div');
+                visual.className = 'visual fragment';
+                visual.innerHTML = visuals[data.visual];
+                content.appendChild(visual);
+            }
+
+            slide.appendChild(content);
+            slide.classList.add(index === 0 ? 'present' : 'future');
+            return slide;
+        }
+
+        slidesData.forEach((data, index) => deck.appendChild(createSlide(data, index)));
+
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const totalSlides = slides.length;
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function prepareFragments() {
+            slides.forEach((slide) => {
+                slide.querySelectorAll('.content-list li').forEach((element) => {
+                    element.classList.add('fragment');
+                });
+            });
+        }
+
+        function getFragments(slide) {
+            return Array.from(slide.querySelectorAll('.fragment'));
+        }
+
+        function revealAll(slide) {
+            getFragments(slide).forEach((fragment) => fragment.classList.add('visible'));
+        }
+
+        function resetFragments(slide) {
+            getFragments(slide).forEach((fragment) => fragment.classList.remove('visible'));
+        }
+
+        function showSlide(n) {
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides.forEach((slide, index) => {
+                slide.classList.remove('past', 'present', 'future');
+                if (index < currentSlide) slide.classList.add('past');
+                else if (index === currentSlide) slide.classList.add('present');
+                else slide.classList.add('future');
+            });
+            resetFragments(slides[currentSlide]);
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+        }
+
+        function nextSlide() {
+            const fragments = getFragments(slides[currentSlide]);
+            const nextFragment = fragments.find((fragment) => !fragment.classList.contains('visible'));
+            if (nextFragment) {
+                nextFragment.classList.add('visible');
+                return;
+            }
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            const fragments = getFragments(slides[currentSlide]);
+            const visibleFragments = fragments.filter((fragment) => fragment.classList.contains('visible'));
+            if (visibleFragments.length > 0) {
+                visibleFragments[visibleFragments.length - 1].classList.remove('visible');
+                return;
+            }
+            showSlide(currentSlide - 1);
+            revealAll(slides[currentSlide]);
+        }
+
+        document.getElementById('next-btn').addEventListener('click', nextSlide);
+        document.getElementById('prev-btn').addEventListener('click', prevSlide);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('button, a')) return;
+            if (e.target.closest('.slide.present')) nextSlide();
+        });
+
+        prepareFragments();
+        showSlide(0);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ],
+                throwOnError: false
+            });
+        });
+    </script>
+</body>
+</html>
