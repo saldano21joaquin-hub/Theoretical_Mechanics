@@ -190,10 +190,27 @@
             border-radius: 7px;
             padding: 10px;
         }
+        .visual.small {
+            width: min(560px, 78%);
+            padding: 8px;
+        }
         .visual svg {
             display: block;
             width: 100%;
             height: auto;
+        }
+        .visual.small svg {
+            height: 220px;
+            max-height: 220px;
+        }
+        .solution-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(340px, 0.72fr);
+            gap: 18px;
+            align-items: center;
+        }
+        .solution-grid .visual.small {
+            width: 100%;
         }
         .fragment {
             opacity: 0;
@@ -393,7 +410,7 @@
                 raw`El gráfico permite observar la forma de la relación.`,
                 table(["t (s)", "x(t) = 2t+1"], [["0", "1"], ["1", "3"], ["2", "5"], ["3", "7"]]),
                 raw`Las tres representaciones deben contar la misma información.`
-            ], { visual: graph([{ points: [[0,1],[1,3],[2,5],[3,7]] }], {xMax:3, yMin:0, yMax:8, yTicks:[0,2,4,6,8], title:"x(t)=2t+1"}) }),
+            ], { dense: true, smallVisual: true, visual: graph([{ points: [[0,1],[1,3],[2,5],[3,7]] }], {xMax:3, yMin:0, yMax:8, yTicks:[0,2,4,6,8], title:"x(t)=2t+1"}) }),
 
             s("Función lineal o afín", [
                 raw`Una función de la forma $f(t)=mt+b$ produce una recta.`,
@@ -409,7 +426,7 @@
                 raw`$\displaystyle m=\frac{\Delta y}{\Delta x}$.`,
                 raw`En un gráfico posición-tiempo:`,
                 raw`$\displaystyle v=\frac{\Delta x}{\Delta t}$.`
-            ], { visual: graph([{ points: [[0,2],[4,10]] }], {xMax:4, yMin:0, yMax:12, yTicks:[0,2,4,6,8,10,12], title:"pendiente = cambio vertical / cambio horizontal"}) }),
+            ], { dense: true, smallVisual: true, visual: graph([{ points: [[0,2],[4,10]] }], {xMax:4, yMin:0, yMax:12, yTicks:[0,2,4,6,8,10,12], title:"pendiente"}) }),
 
             s("Procedimiento para leer un gráfico", [
                 "Identificar qué magnitud está en cada eje.",
@@ -582,11 +599,13 @@
                 raw`$32\,\mathrm{m}$`
             ], graph([{ points: [[0,0],[4,8]] }], {xMax:4, yMin:0, yMax:10, yTicks:[0,2,4,6,8,10], title:"v-t", yLabel:"v (m/s)", area:[{points:[[0,0],[4,8]]}]}) ),
             sol("Pregunta 8", [
-                raw`El área bajo el gráfico es un triángulo.`,
-                raw`Base: $4\,\mathrm{s}$. Altura: $8\,\mathrm{m/s}$.`,
+                raw`El gráfico entregado es $v-t$, por tanto no buscamos pendiente: buscamos área.`,
+                raw`La región bajo la recta forma un triángulo.`,
+                raw`La base del triángulo es el tiempo: $4\,\mathrm{s}$.`,
+                raw`La altura del triángulo es la velocidad máxima: $8\,\mathrm{m/s}$.`,
                 raw`Área: $\frac{1}{2}\cdot4\cdot8=16\,\mathrm{m}$.`,
                 raw`Respuesta correcta: C.`
-            ]),
+            ], { dense: true, visual: graph([{ points: [[0,0],[4,8]] }], {xMax:4, yMin:0, yMax:10, yTicks:[0,2,4,6,8,10], title:"triángulo bajo v-t", yLabel:"v (m/s)", area:[{points:[[0,0],[4,8]], color:"rgba(224,164,86,.30)"}]}) }),
 
             p("Pregunta 9 tipo PAES", raw`Un móvil parte desde $x_0=5\,\mathrm{m}$. Su gráfico $v-t$ tiene un área positiva de $18\,\mathrm{m}$ entre $0$ y $6\,\mathrm{s}$. ¿Cuál es su posición final?`, [
                 raw`$13\,\mathrm{m}$`,
@@ -668,11 +687,13 @@
                 raw`$30\,\mathrm{m}$`
             ], graph([{ points: [[0,6],[5,6]] }], {xMax:5, yMin:0, yMax:8, yTicks:[0,2,4,6,8], title:"v-t", yLabel:"v (m/s)", area:[{points:[[0,6],[5,6]]}]}) ),
             sol("Pregunta 14", [
-                raw`El área bajo el gráfico es un rectángulo.`,
-                raw`Base: $5\,\mathrm{s}$. Altura: $6\,\mathrm{m/s}$.`,
+                raw`El gráfico entregado es $v-t$, entonces el desplazamiento corresponde al área bajo la curva.`,
+                raw`Como la velocidad es constante, la región es un rectángulo.`,
+                raw`La base del rectángulo es $5\,\mathrm{s}$.`,
+                raw`La altura del rectángulo es $6\,\mathrm{m/s}$.`,
                 raw`Desplazamiento: $5\cdot6=30\,\mathrm{m}$.`,
                 raw`Respuesta correcta: E.`
-            ]),
+            ], { dense: true, visual: graph([{ points: [[0,6],[5,6]] }], {xMax:5, yMin:0, yMax:8, yTicks:[0,2,4,6,8], title:"rectángulo bajo v-t", yLabel:"v (m/s)", area:[{points:[[0,6],[5,6]], color:"rgba(224,164,86,.30)"}]}) }),
 
             p("Pregunta 15 tipo PAES", raw`Un móvil tiene el siguiente gráfico $v-t$. ¿Cuál es el desplazamiento total entre 0 s y 6 s?`, [
                 raw`$0\,\mathrm{m}$`,
@@ -682,13 +703,14 @@
                 raw`$24\,\mathrm{m}$`
             ], graph([{ points: [[0,0],[2,6],[4,6],[6,0]] }], {xMax:6, yMin:0, yMax:8, yTicks:[0,2,4,6,8], title:"v-t", yLabel:"v (m/s)", area:[{points:[[0,0],[2,6],[4,6],[6,0]]}]}) ),
             sol("Pregunta 15", [
-                raw`Se puede dividir el área en dos triángulos y un rectángulo.`,
+                raw`Como el gráfico es $v-t$, el desplazamiento total se calcula sumando áreas.`,
+                raw`La región se separa en tres figuras simples: triángulo, rectángulo y triángulo.`,
                 raw`Triángulo inicial: $\frac12\cdot2\cdot6=6\,\mathrm{m}$.`,
                 raw`Rectángulo central: $2\cdot6=12\,\mathrm{m}$.`,
                 raw`Triángulo final: $\frac12\cdot2\cdot6=6\,\mathrm{m}$.`,
                 raw`Total: $6+12+6=24\,\mathrm{m}$.`,
                 raw`Respuesta correcta: E.`
-            ], { dense: true }),
+            ], { dense: true, visual: graph([{ points: [[0,0],[2,6],[4,6],[6,0]] }], {xMax:6, yMin:0, yMax:8, yTicks:[0,2,4,6,8], title:"triángulo + rectángulo + triángulo", yLabel:"v (m/s)", area:[{points:[[0,0],[2,6],[4,6],[6,0]], color:"rgba(224,164,86,.30)"}]}) }),
 
             p("Pregunta 16 tipo PAES", raw`Un móvil tiene $x(0)=0$, $x(1)=1$, $x(2)=4$, $x(3)=9$. ¿Qué afirmación es más razonable?`, [
                 "Su velocidad es constante.",
@@ -712,11 +734,14 @@
                 raw`$-8\,\mathrm{m}$`
             ], graph([{ points: [[0,4],[3,4],[3,-2],[7,-2]] }], {xMax:7, yMin:-4, yMax:6, yTicks:[-4,-2,0,2,4,6], title:"v-t", yLabel:"v (m/s)", area:[{points:[[0,4],[3,4]], color:"rgba(224,164,86,.24)"},{points:[[3,-2],[7,-2]], color:"rgba(217,74,58,.18)"}]}) ),
             sol("Pregunta 17", [
+                raw`El gráfico es $v-t$, por tanto cada rectángulo entrega un desplazamiento.`,
+                raw`El primer rectángulo está sobre el eje: desplazamiento positivo.`,
                 raw`Primer tramo: $\Delta x_1=3\cdot4=12\,\mathrm{m}$.`,
+                raw`El segundo rectángulo está bajo el eje: desplazamiento negativo.`,
                 raw`Segundo tramo: $\Delta x_2=4\cdot(-2)=-8\,\mathrm{m}$.`,
                 raw`Desplazamiento total: $12-8=4\,\mathrm{m}$.`,
                 raw`Respuesta correcta: A.`
-            ]),
+            ], { dense: true, visual: graph([{ points: [[0,4],[3,4],[3,-2],[7,-2]] }], {xMax:7, yMin:-4, yMax:6, yTicks:[-4,-2,0,2,4,6], title:"área positiva y área negativa", yLabel:"v (m/s)", area:[{points:[[0,4],[3,4]], color:"rgba(224,164,86,.30)"},{points:[[3,-2],[7,-2]], color:"rgba(217,74,58,.22)"}]}) }),
 
             p("Pregunta 18 tipo PAES", raw`Si $x(t)=10-2t+\frac12(1)t^2$, ¿cuál es la posición inicial?`, [
                 raw`$-2\,\mathrm{m}$`,
@@ -787,9 +812,10 @@
             } else if (data.kind === "problem") {
                 content.innerHTML = `<div class="eyebrow">Pregunta tipo PAES/DEMRE · Clase 2</div><h1 class="slide-title">${data.title}</h1><div class="two-col"><div class="problem"><div class="context fragment">${data.statement}</div>${data.statement2 ? `<div class="context fragment">${data.statement2}</div>` : ""}<div class="fragment">${optionList(data.options)}</div></div>${data.visual ? `<div class="visual fragment">${data.visual}</div>` : `<div></div>`}</div>`;
             } else if (data.kind === "solution") {
-                content.innerHTML = `<div class="eyebrow">Desarrollo paso a paso</div><h1 class="slide-title">${data.title}</h1><div class="solution">${data.lines.map(line => `<div class="line fragment">${line}</div>`).join("")}</div>`;
+                const solution = `<div class="solution">${data.lines.map(line => `<div class="line fragment">${line}</div>`).join("")}</div>`;
+                content.innerHTML = `<div class="eyebrow">Desarrollo paso a paso</div><h1 class="slide-title">${data.title}</h1>${data.visual ? `<div class="solution-grid">${solution}<div class="visual small">${data.visual}</div></div>` : solution}`;
             } else {
-                content.innerHTML = `<div class="eyebrow">PREUV · Cinemática</div><h1 class="slide-title">${data.title}</h1><ul class="content-list">${data.items.map(item => `<li>${item}</li>`).join("")}</ul>${data.visual ? `<div class="visual fragment">${data.visual}</div>` : ""}`;
+                content.innerHTML = `<div class="eyebrow">PREUV · Cinemática</div><h1 class="slide-title">${data.title}</h1><ul class="content-list">${data.items.map(item => `<li>${item}</li>`).join("")}</ul>${data.visual ? `<div class="visual ${data.smallVisual ? "small" : ""} fragment">${data.visual}</div>` : ""}`;
             }
 
             slide.appendChild(content);
