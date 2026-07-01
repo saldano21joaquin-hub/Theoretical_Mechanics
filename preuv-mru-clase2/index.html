@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PREUV Clase 2 — Funciones y gráficos del movimiento</title>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #ffffff;
+            color: #2c2c2c;
+            overflow: hidden;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: #ffffff;
+        }
+        .slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 36px 52px 96px;
+            background: linear-gradient(to bottom, #ffffff 0%, #f5f1e8 100%);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: transform 0.55s cubic-bezier(0.26, 0.86, 0.44, 0.985), opacity 0.28s ease;
+            pointer-events: none;
+        }
+        .slide.present { opacity: 1; transform: translateX(0); pointer-events: auto; }
+        .slide.past { opacity: 0; transform: translateX(-100%); }
+        .slide.future { opacity: 0; transform: translateX(100%); }
+        .slide::after {
+            content: "";
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            right: 18px;
+            bottom: 88px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+        .slide-content {
+            width: min(1180px, 100%);
+            max-height: calc(100vh - 132px);
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        .eyebrow {
+            color: #b78b4d;
+            font-size: 0.92rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .slide-title {
+            color: #2c2c2c;
+            font-size: 2.05rem;
+            line-height: 1.16;
+            margin-bottom: 18px;
+        }
+        .portada-title {
+            font-size: 3.25rem;
+            line-height: 1.1;
+            margin-bottom: 18px;
+        }
+        .portada-subtitle {
+            color: #5a5a5a;
+            font-size: 1.35rem;
+            line-height: 1.45;
+            max-width: 940px;
+            margin: 0 auto;
+        }
+        .divider {
+            width: 190px;
+            height: 3px;
+            margin: 28px auto;
+            background: linear-gradient(to right, transparent, #e0a456, transparent);
+        }
+        .content-list {
+            list-style: none;
+            max-width: 1040px;
+            margin: 0 auto;
+            text-align: left;
+            font-size: 1.12rem;
+            line-height: 1.54;
+        }
+        .content-list li {
+            position: relative;
+            margin-bottom: 8px;
+            padding-left: 24px;
+        }
+        .content-list li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: #b78b4d;
+        }
+        .content-list li.center,
+        .content-list li:has(.katex) {
+            padding-left: 0;
+            text-align: center;
+        }
+        .content-list li.center::before,
+        .content-list li:has(.katex)::before { content: ""; }
+        .two-col {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(420px, 0.95fr);
+            gap: 28px;
+            align-items: center;
+        }
+        .three-col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            align-items: stretch;
+            margin-top: 16px;
+        }
+        .panel {
+            background: rgba(255,255,255,0.72);
+            border: 1px solid #ded6c9;
+            border-left: 4px solid #e0a456;
+            border-radius: 7px;
+            padding: 18px 20px;
+            text-align: left;
+            font-size: 1.08rem;
+            line-height: 1.42;
+        }
+        .panel strong { color: #9b7138; }
+        .math-block,
+        .option-box {
+            background: white;
+            border: 1px solid rgba(224,164,86,0.42);
+            border-radius: 7px;
+            padding: 13px 16px;
+            margin: 8px auto;
+            width: fit-content;
+            max-width: 100%;
+        }
+        .problem {
+            text-align: left;
+            font-size: 1.08rem;
+            line-height: 1.44;
+        }
+        .problem .context {
+            color: #2c2c2c;
+            margin-bottom: 14px;
+        }
+        .alternatives {
+            display: grid;
+            gap: 7px;
+            margin-top: 12px;
+        }
+        .alternatives div {
+            background: rgba(255,255,255,0.74);
+            border: 1px solid #ded6c9;
+            border-radius: 6px;
+            padding: 8px 11px;
+        }
+        .solution {
+            background: white;
+            border: 1px solid #ded6c9;
+            border-left: 5px solid #4f8f62;
+            border-radius: 7px;
+            padding: 18px 22px;
+            text-align: left;
+            font-size: 1.08rem;
+            line-height: 1.45;
+        }
+        .solution .line {
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(222,214,201,0.65);
+        }
+        .solution .line:last-child { border-bottom: none; }
+        .visual {
+            margin: 10px auto 0;
+            background: white;
+            border: 1px solid #ded6c9;
+            border-radius: 7px;
+            padding: 10px;
+        }
+        .visual svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .fragment {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.24s ease, transform 0.24s ease;
+        }
+        .fragment.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .dense .slide-title { font-size: 1.72rem; margin-bottom: 12px; }
+        .dense .content-list { font-size: 1rem; line-height: 1.42; }
+        .dense .problem,
+        .dense .solution { font-size: 0.98rem; }
+        .slide-counter {
+            position: fixed;
+            bottom: 26px;
+            left: 48px;
+            z-index: 10;
+            color: #888888;
+            font-family: monospace;
+            font-size: 0.98rem;
+        }
+        .navigation {
+            position: fixed;
+            right: 48px;
+            bottom: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+        .nav-button {
+            width: 42px;
+            height: 34px;
+            border: 1px solid #d8d8d8;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.92);
+            color: #2c2c2c;
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+        .nav-button:hover { background: #f5f1e8; }
+        .katex-display { margin: 0.25em 0; overflow-x: auto; overflow-y: hidden; }
+        table.data {
+            border-collapse: collapse;
+            margin: 12px auto;
+            background: white;
+            font-size: 1.04rem;
+        }
+        table.data td, table.data th {
+            border: 1px solid #ded6c9;
+            padding: 8px 12px;
+            text-align: center;
+        }
+        table.data th { color: #9b7138; }
+        @media (max-width: 900px) {
+            .slide { padding: 30px 22px 92px; }
+            .slide-title { font-size: 1.45rem; }
+            .portada-title { font-size: 2.25rem; }
+            .two-col, .three-col { grid-template-columns: 1fr; }
+            .content-list { font-size: 0.96rem; }
+            .slide-counter { left: 24px; }
+            .navigation { right: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container" id="deck"></div>
+    <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">1</span></div>
+    <div class="navigation">
+        <button class="nav-button" id="prev-btn">←</button>
+        <button class="nav-button" id="next-btn">→</button>
+    </div>
+
+    <script>
+        const raw = String.raw;
+
+        function table(headers, rows) {
+            return `<table class="data"><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr>${rows.map(row => `<tr>${row.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</table>`;
+        }
+
+        function graph(series, options = {}) {
+            const width = 760;
+            const height = 330;
+            const m = { left: 70, right: 32, top: 30, bottom: 54 };
+            const all = series.flatMap(s => s.points);
+            const xs = all.map(p => p[0]);
+            const ys = all.map(p => p[1]);
+            const xMin = options.xMin ?? Math.min(0, ...xs);
+            const xMax = options.xMax ?? Math.max(...xs);
+            const yMin = options.yMin ?? Math.min(0, ...ys);
+            const yMax = options.yMax ?? Math.max(...ys);
+            const sx = x => m.left + (x - xMin) / (xMax - xMin) * (width - m.left - m.right);
+            const sy = y => m.top + (yMax - y) / (yMax - yMin) * (height - m.top - m.bottom);
+            const xTicks = options.xTicks ?? ticks(xMin, xMax);
+            const yTicks = options.yTicks ?? ticks(yMin, yMax);
+            const zeroY = yMin <= 0 && yMax >= 0 ? sy(0) : sy(yMin);
+            const zeroX = xMin <= 0 && xMax >= 0 ? sx(0) : sx(xMin);
+            const grid = [
+                ...xTicks.map(t => `<line x1="${sx(t)}" y1="${m.top}" x2="${sx(t)}" y2="${height-m.bottom}" stroke="#eee6d8"/>`),
+                ...yTicks.map(t => `<line x1="${m.left}" y1="${sy(t)}" x2="${width-m.right}" y2="${sy(t)}" stroke="#eee6d8"/>`)
+            ].join("");
+            const labels = [
+                ...xTicks.map(t => `<text x="${sx(t)}" y="${height-22}" text-anchor="middle" font-size="17" fill="#6f6a61">${t}</text>`),
+                ...yTicks.map(t => `<text x="${m.left-14}" y="${sy(t)+6}" text-anchor="end" font-size="17" fill="#6f6a61">${t}</text>`)
+            ].join("");
+            const area = options.area ? options.area.map(a => {
+                const pts = a.points.map(p => `${sx(p[0])},${sy(p[1])}`).join(" ");
+                const first = a.points[0];
+                const last = a.points[a.points.length - 1];
+                return `<polygon points="${pts} ${sx(last[0])},${zeroY} ${sx(first[0])},${zeroY}" fill="${a.color ?? "rgba(224,164,86,.22)"}"/>`;
+            }).join("") : "";
+            const lineSvg = series.map(s => {
+                const poly = s.points.map(p => `${sx(p[0]).toFixed(1)},${sy(p[1]).toFixed(1)}`).join(" ");
+                const dots = (s.dots === false ? "" : s.points.map((p, i) => `<circle cx="${sx(p[0])}" cy="${sy(p[1])}" r="5.5" fill="${s.color ?? "#e0a456"}" stroke="#2c2c2c" stroke-width="1.5"/>${s.labels?.[i] ? `<text x="${sx(p[0])+9}" y="${sy(p[1])-9}" font-size="17" fill="#2c2c2c">${s.labels[i]}</text>` : ""}`).join(""));
+                const last = s.points[s.points.length - 1];
+                const name = s.name ? `<text x="${sx(last[0])-6}" y="${sy(last[1])-10}" text-anchor="end" font-size="18" font-weight="800" fill="${s.color ?? "#e0a456"}">${s.name}</text>` : "";
+                return `<polyline points="${poly}" fill="none" stroke="${s.color ?? "#e0a456"}" stroke-width="${s.width ?? 5}" stroke-linecap="round" stroke-linejoin="round"/>${dots}${name}`;
+            }).join("");
+            return `<svg viewBox="0 0 ${width} ${height}">
+                ${options.title ? `<text x="${width/2}" y="22" text-anchor="middle" font-size="19" font-weight="700" fill="#2c2c2c">${options.title}</text>` : ""}
+                ${grid}
+                <line x1="${m.left}" y1="${zeroY}" x2="${width-m.right}" y2="${zeroY}" stroke="#2c2c2c" stroke-width="2.2"/>
+                <line x1="${zeroX}" y1="${m.top}" x2="${zeroX}" y2="${height-m.bottom}" stroke="#2c2c2c" stroke-width="2.2"/>
+                ${area}${lineSvg}${labels}
+                <text x="${width-m.right}" y="${height-9}" text-anchor="end" font-size="19" font-weight="700" fill="#2c2c2c">${options.xLabel ?? "t (s)"}</text>
+                <text x="${m.left+2}" y="${m.top-7}" font-size="19" font-weight="700" fill="#2c2c2c">${options.yLabel ?? "x (m)"}</text>
+            </svg>`;
+        }
+
+        function ticks(min, max) {
+            const span = max - min;
+            const step = span <= 8 ? 1 : span <= 16 ? 2 : span <= 40 ? 5 : 10;
+            const out = [];
+            for (let v = Math.ceil(min / step) * step; v <= max; v += step) out.push(v);
+            return out;
+        }
+
+        function optionList(items) {
+            return `<div class="alternatives">${items.map((item, i) => `<div>${String.fromCharCode(65+i)}) ${item}</div>`).join("")}</div>`;
+        }
+
+        function s(title, items, extra = {}) { return { title, items, ...extra }; }
+        function p(title, statement, options, visual, extra = {}) {
+            return { title, kind: "problem", statement, options, visual, ...extra };
+        }
+        function sol(title, lines, extra = {}) {
+            return { title: `Desarrollo · ${title}`, kind: "solution", lines, ...extra };
+        }
+
+        const slidesData = [
+            { type: "Portada", title: "Clase 2: funciones y gráficos del movimiento", subtitle: "PREUV · Cinemática desde matemáticas básicas hasta aceleración constante" },
+
+            s("Objetivo de la clase", [
+                "Construir el lenguaje matemático necesario para leer gráficos de movimiento.",
+                raw`Distinguir función, tabla, gráfico y significado físico.`,
+                raw`Interpretar velocidad como cambio de posición por unidad de tiempo.`,
+                raw`Introducir aceleración como cambio de velocidad por unidad de tiempo.`,
+                raw`Comprender por qué una posición con aceleración constante se representa con una función cuadrática.`
+            ]),
+
+            s("Por qué comenzamos con funciones", [
+                raw`En cinemática no basta con saber una fórmula.`,
+                raw`Debemos reconocer qué representa cada símbolo.`,
+                raw`Una función permite describir cómo una cantidad depende de otra.`,
+                raw`En movimiento, la pregunta típica es: ¿qué posición tiene el móvil en cada instante?`,
+                raw`Por eso escribimos $x=x(t)$.`
+            ]),
+
+            s("Variable independiente y variable dependiente", [
+                raw`La variable independiente es la entrada del problema.`,
+                raw`En cinemática suele ser el tiempo: $t$.`,
+                raw`La variable dependiente es la cantidad que cambia según esa entrada.`,
+                raw`En un gráfico posición-tiempo, la posición depende del tiempo: $x(t)$.`,
+                raw`Leer $x(3)$ significa: posición cuando $t=3$.`
+            ]),
+
+            s("Pares ordenados", [
+                raw`Un punto de un gráfico no es solo un punto dibujado.`,
+                raw`Es un par de datos.`,
+                raw`$(t,x)=(4,10)$ significa: a los $4\,\mathrm{s}$, la posición es $10\,\mathrm{m}$.`,
+                raw`El primer número se lee en el eje horizontal.`,
+                raw`El segundo número se lee en el eje vertical.`
+            ], { visual: graph([{ points: [[0,0],[4,10]], labels: ["","(4,10)"] }], {xMax:5, yMin:0, yMax:12, yTicks:[0,2,4,6,8,10,12], title:"Par ordenado"}) }),
+
+            s("Qué es una función", [
+                raw`Una función asigna a cada entrada permitida una única salida.`,
+                raw`Si la entrada es $t$, la salida puede ser $x(t)$.`,
+                raw`Ejemplo: $x(t)=2t+1$.`,
+                raw`Si $t=0$, entonces $x(0)=1$.`,
+                raw`Si $t=3$, entonces $x(3)=7$.`
+            ]),
+
+            s("Tabla, función y gráfico", [
+                raw`La tabla muestra algunos valores.`,
+                raw`La función entrega la expresión completa.`,
+                raw`El gráfico permite observar la forma de la relación.`,
+                table(["t (s)", "x(t) = 2t+1"], [["0", "1"], ["1", "3"], ["2", "5"], ["3", "7"]]),
+                raw`Las tres representaciones deben contar la misma información.`
+            ], { visual: graph([{ points: [[0,1],[1,3],[2,5],[3,7]] }], {xMax:3, yMin:0, yMax:8, yTicks:[0,2,4,6,8], title:"x(t)=2t+1"}) }),
+
+            s("Función lineal o afín", [
+                raw`Una función de la forma $f(t)=mt+b$ produce una recta.`,
+                raw`El número $b$ indica el valor inicial.`,
+                raw`El número $m$ indica cuánto cambia la salida por cada unidad de entrada.`,
+                raw`En cinemática: $x(t)=x_0+vt$.`,
+                raw`Entonces $x_0$ es posición inicial y $v$ es velocidad.`
+            ]),
+
+            s("Pendiente de una recta", [
+                raw`La pendiente mide razón de cambio.`,
+                raw`Se calcula comparando un cambio vertical con un cambio horizontal.`,
+                raw`$\displaystyle m=\frac{\Delta y}{\Delta x}$.`,
+                raw`En un gráfico posición-tiempo:`,
+                raw`$\displaystyle v=\frac{\Delta x}{\Delta t}$.`
+            ], { visual: graph([{ points: [[0,2],[4,10]] }], {xMax:4, yMin:0, yMax:12, yTicks:[0,2,4,6,8,10,12], title:"pendiente = cambio vertical / cambio horizontal"}) }),
+
+            s("Procedimiento para leer un gráfico", [
+                "Identificar qué magnitud está en cada eje.",
+                "Revisar unidades.",
+                "Observar si la curva sube, baja o permanece horizontal.",
+                "Separar por tramos cuando cambia la forma.",
+                "Calcular pendientes si el gráfico es posición-tiempo.",
+                "Distinguir posición, desplazamiento y distancia recorrida."
+            ]),
+
+            p("Pregunta 1 tipo PAES", raw`Una función está dada por $x(t)=5+3t$, donde $x$ está en metros y $t$ en segundos. ¿Cuál es la interpretación correcta?`, [
+                raw`Parte en $3\,\mathrm{m}$ y avanza $5\,\mathrm{m/s}$.`,
+                raw`Parte en $5\,\mathrm{m}$ y avanza $3\,\mathrm{m/s}$.`,
+                raw`Parte en el origen y avanza $8\,\mathrm{m/s}$.`,
+                raw`Está en reposo en $5\,\mathrm{m}$.`,
+                raw`Se mueve hacia el sentido negativo.`
+            ]),
+            sol("Pregunta 1", [
+                raw`La forma general para MRU es $x(t)=x_0+vt$.`,
+                raw`Comparando: $x_0=5\,\mathrm{m}$ y $v=3\,\mathrm{m/s}$.`,
+                raw`Respuesta correcta: B.`
+            ]),
+
+            p("Pregunta 2 tipo PAES", "La tabla muestra la posición de un móvil.", [
+                raw`$1\,\mathrm{m/s}$`,
+                raw`$2\,\mathrm{m/s}$`,
+                raw`$3\,\mathrm{m/s}$`,
+                raw`$4\,\mathrm{m/s}$`,
+                raw`$6\,\mathrm{m/s}$`
+            ], table(["t (s)", "0", "1", "2", "3"], [["x (m)", "2", "5", "8", "11"]]), { statement2: "¿Cuál es su velocidad?" }),
+            sol("Pregunta 2", [
+                raw`En cada segundo la posición aumenta $3\,\mathrm{m}$.`,
+                raw`$\displaystyle v=\frac{\Delta x}{\Delta t}=\frac{5-2}{1-0}=3\,\mathrm{m/s}$.`,
+                raw`Respuesta correcta: C.`
+            ]),
+
+            p("Pregunta 3 tipo PAES", "El gráfico muestra la posición de un móvil. ¿Cuál es la velocidad entre 0 s y 4 s?", [
+                raw`$1\,\mathrm{m/s}$`,
+                raw`$2\,\mathrm{m/s}$`,
+                raw`$3\,\mathrm{m/s}$`,
+                raw`$8\,\mathrm{m/s}$`,
+                raw`$16\,\mathrm{m/s}$`
+            ], graph([{ points: [[0,2],[4,10]] }], {xMax:4, yMin:0, yMax:12, yTicks:[0,2,4,6,8,10,12], title:"posición-tiempo"})),
+            sol("Pregunta 3", [
+                raw`La velocidad es la pendiente en el gráfico $x-t$.`,
+                raw`$\Delta x=10-2=8\,\mathrm{m}$.`,
+                raw`$\Delta t=4-0=4\,\mathrm{s}$.`,
+                raw`$\displaystyle v=\frac{8}{4}=2\,\mathrm{m/s}$.`,
+                raw`Respuesta correcta: B.`
+            ]),
+
+            p("Pregunta 4 tipo PAES", "Un móvil se desplaza según el gráfico. ¿Qué ocurre entre 2 s y 5 s?", [
+                "Avanza en sentido positivo.",
+                "Avanza en sentido negativo.",
+                "Permanece en reposo.",
+                "Aumenta su rapidez.",
+                "Cambia de sentido dos veces."
+            ], graph([{ points: [[0,0],[2,6],[5,6],[7,-2]], labels:["A","B","C","D"] }], {xMax:7, yMin:-4, yMax:8, yTicks:[-4,-2,0,2,4,6,8], title:"posición-tiempo"})),
+            sol("Pregunta 4", [
+                raw`Entre $2\,\mathrm{s}$ y $5\,\mathrm{s}$ la posición es constante.`,
+                raw`Si la posición no cambia, la velocidad es cero.`,
+                raw`Respuesta correcta: C.`
+            ]),
+
+            p("Pregunta 5 tipo PAES", "Para el mismo gráfico, ¿cuál es el desplazamiento total entre 0 s y 7 s?", [
+                raw`$-2\,\mathrm{m}$`,
+                raw`$2\,\mathrm{m}$`,
+                raw`$6\,\mathrm{m}$`,
+                raw`$8\,\mathrm{m}$`,
+                raw`$14\,\mathrm{m}$`
+            ], graph([{ points: [[0,0],[2,6],[5,6],[7,-2]], labels:["A","B","C","D"] }], {xMax:7, yMin:-4, yMax:8, yTicks:[-4,-2,0,2,4,6,8], title:"desplazamiento total"}) ),
+            sol("Pregunta 5", [
+                raw`El desplazamiento usa solo posición final e inicial.`,
+                raw`$\Delta x=x_f-x_i=-2-0=-2\,\mathrm{m}$.`,
+                raw`Respuesta correcta: A.`
+            ]),
+
+            p("Pregunta 6 tipo PAES", "Para el gráfico anterior, ¿cuál es la distancia total recorrida?", [
+                raw`$2\,\mathrm{m}$`,
+                raw`$6\,\mathrm{m}$`,
+                raw`$8\,\mathrm{m}$`,
+                raw`$14\,\mathrm{m}$`,
+                raw`$16\,\mathrm{m}$`
+            ], graph([{ points: [[0,0],[2,6],[5,6],[7,-2]], labels:["A","B","C","D"] }], {xMax:7, yMin:-4, yMax:8, yTicks:[-4,-2,0,2,4,6,8], title:"distancia recorrida"}) ),
+            sol("Pregunta 6", [
+                raw`De $0$ a $2\,\mathrm{s}$ recorre $6\,\mathrm{m}$.`,
+                raw`De $2$ a $5\,\mathrm{s}$ recorre $0\,\mathrm{m}$.`,
+                raw`De $5$ a $7\,\mathrm{s}$ recorre $8\,\mathrm{m}$.`,
+                raw`Distancia total: $6+0+8=14\,\mathrm{m}$.`,
+                raw`Respuesta correcta: D.`
+            ]),
+
+            s("Por qué aparece la aceleración", [
+                raw`La velocidad describe cómo cambia la posición.`,
+                raw`Pero puede ocurrir que la velocidad misma cambie.`,
+                raw`Si un móvil aumenta su velocidad, disminuye su velocidad o cambia de sentido, necesitamos otra magnitud.`,
+                raw`Esa magnitud es la aceleración.`,
+                raw`La aceleración mide cambio de velocidad por unidad de tiempo.`
+            ]),
+
+            s("Aceleración media", [
+                raw`La aceleración media se define como`,
+                raw`$\displaystyle a=\frac{\Delta v}{\Delta t}$.`,
+                raw`Si $a>0$, la velocidad aumenta hacia el sentido positivo.`,
+                raw`Si $a<0$, la velocidad disminuye o cambia hacia el sentido negativo.`,
+                raw`Si $a=0$, la velocidad permanece constante.`
+            ]),
+
+            s("Gráfico velocidad-tiempo", [
+                raw`En un gráfico $v-t$, el eje vertical ya no representa posición.`,
+                raw`Representa velocidad.`,
+                raw`La pendiente de un gráfico $v-t$ representa aceleración.`,
+                raw`$\displaystyle a=\frac{\Delta v}{\Delta t}$.`,
+                raw`Si el gráfico $v-t$ es una recta, la aceleración es constante.`
+            ], { visual: graph([{ points: [[0,2],[4,10]] }], {xMax:4, yMin:0, yMax:12, yTicks:[0,2,4,6,8,10,12], title:"velocidad-tiempo", yLabel:"v (m/s)"}) }),
+
+            s("Por qué aparece una función cuadrática", [
+                raw`Con velocidad constante, en tiempos iguales se recorren distancias iguales.`,
+                raw`Con aceleración constante, la velocidad cambia de manera uniforme.`,
+                raw`Entonces, en tiempos iguales, las distancias recorridas ya no son iguales.`,
+                table(["intervalo", "velocidad media aproximada", "desplazamiento"], [["0 a 1 s", "1 m/s", "1 m"], ["1 a 2 s", "3 m/s", "3 m"], ["2 a 3 s", "5 m/s", "5 m"]]),
+                raw`Los desplazamientos se van acumulando cada vez más rápido.`
+            ]),
+
+            s("La forma cuadrática", [
+                raw`Cuando la aceleración es constante, la posición se describe mediante`,
+                raw`$\displaystyle x(t)=x_0+v_0t+\frac{1}{2}at^2$.`,
+                raw`El término $x_0$ indica la posición inicial.`,
+                raw`El término $v_0t$ representa lo que ocurriría si la velocidad inicial se mantuviera constante.`,
+                raw`El término $\frac{1}{2}at^2$ representa el efecto acumulado de la aceleración.`
+            ]),
+
+            s("Cómo observar un problema de cinemática", [
+                "Qué magnitud entrega el gráfico o la función.",
+                "Qué pide la pregunta.",
+                "Si hay velocidad constante o aceleración constante.",
+                "Si se debe calcular pendiente, área o evaluar una función.",
+                "Si la respuesta corresponde a posición, desplazamiento, distancia, velocidad o aceleración.",
+                "Si el signo tiene significado físico."
+            ]),
+
+            p("Pregunta 7 tipo PAES", "Un móvil tiene la velocidad indicada en el gráfico. ¿Cuál es su aceleración?", [
+                raw`$1\,\mathrm{m/s^2}$`,
+                raw`$2\,\mathrm{m/s^2}$`,
+                raw`$3\,\mathrm{m/s^2}$`,
+                raw`$8\,\mathrm{m/s^2}$`,
+                raw`$10\,\mathrm{m/s^2}$`
+            ], graph([{ points: [[0,2],[4,10]] }], {xMax:4, yMin:0, yMax:12, yTicks:[0,2,4,6,8,10,12], title:"v-t", yLabel:"v (m/s)"})),
+            sol("Pregunta 7", [
+                raw`En un gráfico $v-t$, la pendiente es aceleración.`,
+                raw`$\Delta v=10-2=8\,\mathrm{m/s}$.`,
+                raw`$\Delta t=4\,\mathrm{s}$.`,
+                raw`$\displaystyle a=\frac{8}{4}=2\,\mathrm{m/s^2}$.`,
+                raw`Respuesta correcta: B.`
+            ]),
+
+            s("Área bajo el gráfico velocidad-tiempo", [
+                raw`En un gráfico $v-t$, el área bajo la curva representa desplazamiento.`,
+                raw`No se necesita cálculo diferencial o integral para los casos PAES usuales.`,
+                raw`Basta calcular áreas de rectángulos, triángulos y trapecios.`,
+                raw`Si el área está sobre el eje, el desplazamiento es positivo.`,
+                raw`Si está bajo el eje, el desplazamiento es negativo.`
+            ]),
+
+            p("Pregunta 8 tipo PAES", "El gráfico muestra la velocidad de un móvil. ¿Cuál es el desplazamiento entre 0 s y 4 s?", [
+                raw`$8\,\mathrm{m}$`,
+                raw`$12\,\mathrm{m}$`,
+                raw`$16\,\mathrm{m}$`,
+                raw`$20\,\mathrm{m}$`,
+                raw`$32\,\mathrm{m}$`
+            ], graph([{ points: [[0,0],[4,8]] }], {xMax:4, yMin:0, yMax:10, yTicks:[0,2,4,6,8,10], title:"v-t", yLabel:"v (m/s)", area:[{points:[[0,0],[4,8]]}]}) ),
+            sol("Pregunta 8", [
+                raw`El área bajo el gráfico es un triángulo.`,
+                raw`Base: $4\,\mathrm{s}$. Altura: $8\,\mathrm{m/s}$.`,
+                raw`Área: $\frac{1}{2}\cdot4\cdot8=16\,\mathrm{m}$.`,
+                raw`Respuesta correcta: C.`
+            ]),
+
+            p("Pregunta 9 tipo PAES", raw`Un móvil parte desde $x_0=5\,\mathrm{m}$. Su gráfico $v-t$ tiene un área positiva de $18\,\mathrm{m}$ entre $0$ y $6\,\mathrm{s}$. ¿Cuál es su posición final?`, [
+                raw`$13\,\mathrm{m}$`,
+                raw`$18\,\mathrm{m}$`,
+                raw`$23\,\mathrm{m}$`,
+                raw`$30\,\mathrm{m}$`,
+                raw`$-13\,\mathrm{m}$`
+            ]),
+            sol("Pregunta 9", [
+                raw`El área bajo $v-t$ entrega desplazamiento: $\Delta x=18\,\mathrm{m}$.`,
+                raw`La posición final es $x_f=x_0+\Delta x$.`,
+                raw`$x_f=5+18=23\,\mathrm{m}$.`,
+                raw`Respuesta correcta: C.`
+            ]),
+
+            p("Pregunta 10 tipo PAES", raw`La posición de un móvil está dada por $x(t)=2+t^2$. ¿Qué se puede afirmar del movimiento?`, [
+                "La velocidad es constante.",
+                "La posición disminuye siempre.",
+                "La posición aumenta cada vez más rápido.",
+                "El móvil permanece en reposo.",
+                "El móvil cambia de sentido en t = 2 s."
+            ], graph([{ points: [[0,2],[1,3],[2,6],[3,11],[4,18]] }], {xMax:4, yMin:0, yMax:20, yTicks:[0,5,10,15,20], title:"x(t)=2+t²"}) ),
+            sol("Pregunta 10", [
+                raw`Los cambios de posición en cada segundo no son iguales.`,
+                raw`De $0$ a $1$: aumenta $1\,\mathrm{m}$.`,
+                raw`De $1$ a $2$: aumenta $3\,\mathrm{m}$.`,
+                raw`De $2$ a $3$: aumenta $5\,\mathrm{m}$.`,
+                raw`La posición aumenta cada vez más rápido.`,
+                raw`Respuesta correcta: C.`
+            ]),
+
+            p("Pregunta 11 tipo PAES", "Un móvil tiene velocidad negativa durante todo un intervalo. ¿Qué significa esto?", [
+                "Que está detenido.",
+                "Que su rapidez es negativa.",
+                "Que se mueve hacia el sentido definido como negativo.",
+                "Que su aceleración necesariamente es negativa.",
+                "Que su posición siempre es negativa."
+            ]),
+            sol("Pregunta 11", [
+                raw`La velocidad puede tener signo porque indica sentido de movimiento.`,
+                raw`La rapidez es el valor absoluto de la velocidad y no es negativa.`,
+                raw`Respuesta correcta: C.`
+            ]),
+
+            p("Pregunta 12 tipo PAES", raw`El gráfico $v-t$ cruza el eje horizontal. ¿Qué indica el cruce?`, [
+                "La posición es cero.",
+                "La velocidad es cero en ese instante.",
+                "La aceleración es cero en ese instante.",
+                "El desplazamiento total es cero.",
+                "La distancia recorrida es cero."
+            ], graph([{ points: [[0,6],[3,0],[6,-6]] }], {xMax:6, yMin:-8, yMax:8, yTicks:[-8,-4,0,4,8], title:"v-t", yLabel:"v (m/s)"}) ),
+            sol("Pregunta 12", [
+                raw`El eje horizontal corresponde a $v=0$.`,
+                raw`Cruzar ese eje indica que la velocidad cambia de signo.`,
+                raw`Físicamente, el móvil se detiene instantáneamente y luego cambia de sentido.`,
+                raw`Respuesta correcta: B.`
+            ]),
+
+            p("Pregunta 13 tipo PAES", "Un móvil parte del reposo y tiene aceleración constante positiva. ¿Cuál forma corresponde mejor a su gráfico posición-tiempo?", [
+                "Una recta horizontal.",
+                "Una recta creciente.",
+                "Una recta decreciente.",
+                "Una curva creciente cada vez más inclinada.",
+                "Una curva decreciente cada vez menos inclinada."
+            ]),
+            sol("Pregunta 13", [
+                raw`Si parte del reposo, inicialmente la velocidad es cero.`,
+                raw`Si la aceleración positiva es constante, la velocidad aumenta.`,
+                raw`En $x-t$, la pendiente representa velocidad.`,
+                raw`Por tanto, la curva debe hacerse cada vez más inclinada.`,
+                raw`Respuesta correcta: D.`
+            ]),
+
+            p("Pregunta 14 tipo PAES", raw`El gráfico muestra velocidad constante de $6\,\mathrm{m/s}$ durante $5\,\mathrm{s}$. ¿Cuál es el desplazamiento?`, [
+                raw`$1.2\,\mathrm{m}$`,
+                raw`$5\,\mathrm{m}$`,
+                raw`$6\,\mathrm{m}$`,
+                raw`$11\,\mathrm{m}$`,
+                raw`$30\,\mathrm{m}$`
+            ], graph([{ points: [[0,6],[5,6]] }], {xMax:5, yMin:0, yMax:8, yTicks:[0,2,4,6,8], title:"v-t", yLabel:"v (m/s)", area:[{points:[[0,6],[5,6]]}]}) ),
+            sol("Pregunta 14", [
+                raw`El área bajo el gráfico es un rectángulo.`,
+                raw`Base: $5\,\mathrm{s}$. Altura: $6\,\mathrm{m/s}$.`,
+                raw`Desplazamiento: $5\cdot6=30\,\mathrm{m}$.`,
+                raw`Respuesta correcta: E.`
+            ]),
+
+            p("Pregunta 15 tipo PAES", raw`Un móvil tiene el siguiente gráfico $v-t$. ¿Cuál es el desplazamiento total entre 0 s y 6 s?`, [
+                raw`$0\,\mathrm{m}$`,
+                raw`$6\,\mathrm{m}$`,
+                raw`$12\,\mathrm{m}$`,
+                raw`$18\,\mathrm{m}$`,
+                raw`$24\,\mathrm{m}$`
+            ], graph([{ points: [[0,0],[2,6],[4,6],[6,0]] }], {xMax:6, yMin:0, yMax:8, yTicks:[0,2,4,6,8], title:"v-t", yLabel:"v (m/s)", area:[{points:[[0,0],[2,6],[4,6],[6,0]]}]}) ),
+            sol("Pregunta 15", [
+                raw`Se puede dividir el área en dos triángulos y un rectángulo.`,
+                raw`Triángulo inicial: $\frac12\cdot2\cdot6=6\,\mathrm{m}$.`,
+                raw`Rectángulo central: $2\cdot6=12\,\mathrm{m}$.`,
+                raw`Triángulo final: $\frac12\cdot2\cdot6=6\,\mathrm{m}$.`,
+                raw`Total: $6+12+6=24\,\mathrm{m}$.`,
+                raw`Respuesta correcta: E.`
+            ], { dense: true }),
+
+            p("Pregunta 16 tipo PAES", raw`Un móvil tiene $x(0)=0$, $x(1)=1$, $x(2)=4$, $x(3)=9$. ¿Qué afirmación es más razonable?`, [
+                "Su velocidad es constante.",
+                "Su posición aumenta cada vez menos.",
+                "Su posición aumenta cada vez más.",
+                "Su posición permanece constante.",
+                "Su desplazamiento total es cero."
+            ]),
+            sol("Pregunta 16", [
+                raw`Los cambios son: $1-0=1$, $4-1=3$, $9-4=5$.`,
+                raw`Los cambios aumentan.`,
+                raw`Eso es compatible con aceleración positiva.`,
+                raw`Respuesta correcta: C.`
+            ]),
+
+            p("Pregunta 17 tipo PAES", raw`Un móvil se mueve con $v=4\,\mathrm{m/s}$ entre 0 y 3 s, luego con $v=-2\,\mathrm{m/s}$ entre 3 y 7 s. ¿Cuál es su desplazamiento total?`, [
+                raw`$4\,\mathrm{m}$`,
+                raw`$8\,\mathrm{m}$`,
+                raw`$12\,\mathrm{m}$`,
+                raw`$20\,\mathrm{m}$`,
+                raw`$-8\,\mathrm{m}$`
+            ], graph([{ points: [[0,4],[3,4],[3,-2],[7,-2]] }], {xMax:7, yMin:-4, yMax:6, yTicks:[-4,-2,0,2,4,6], title:"v-t", yLabel:"v (m/s)", area:[{points:[[0,4],[3,4]], color:"rgba(224,164,86,.24)"},{points:[[3,-2],[7,-2]], color:"rgba(217,74,58,.18)"}]}) ),
+            sol("Pregunta 17", [
+                raw`Primer tramo: $\Delta x_1=3\cdot4=12\,\mathrm{m}$.`,
+                raw`Segundo tramo: $\Delta x_2=4\cdot(-2)=-8\,\mathrm{m}$.`,
+                raw`Desplazamiento total: $12-8=4\,\mathrm{m}$.`,
+                raw`Respuesta correcta: A.`
+            ]),
+
+            p("Pregunta 18 tipo PAES", raw`Si $x(t)=10-2t+\frac12(1)t^2$, ¿cuál es la posición inicial?`, [
+                raw`$-2\,\mathrm{m}$`,
+                raw`$1\,\mathrm{m}$`,
+                raw`$5\,\mathrm{m}$`,
+                raw`$10\,\mathrm{m}$`,
+                raw`$12\,\mathrm{m}$`
+            ]),
+            sol("Pregunta 18", [
+                raw`La posición inicial se obtiene evaluando en $t=0$.`,
+                raw`$x(0)=10-2(0)+\frac12(1)(0)^2=10\,\mathrm{m}$.`,
+                raw`Respuesta correcta: D.`
+            ]),
+
+            p("Pregunta 19 tipo PAES", raw`Un estudiante afirma: “si el desplazamiento total es cero, entonces la distancia recorrida también es cero”. ¿Qué evaluación es correcta?`, [
+                "Siempre es correcta.",
+                "Es correcta solo si la velocidad es positiva.",
+                "Es falsa: un móvil puede volver al punto de partida.",
+                "Es falsa solo en movimientos acelerados.",
+                "Es correcta si el gráfico es una recta."
+            ]),
+            sol("Pregunta 19", [
+                raw`El desplazamiento depende solo de posición final e inicial.`,
+                raw`La distancia mide todo el camino recorrido.`,
+                raw`Un móvil puede avanzar y volver al punto inicial: desplazamiento cero, distancia no cero.`,
+                raw`Respuesta correcta: C.`
+            ]),
+
+            p("Pregunta 20 tipo PAES", raw`Un gráfico $x-t$ es una recta cuya pendiente es negativa. ¿Qué opción describe mejor el movimiento?`, [
+                "Posición constante.",
+                "Velocidad constante negativa.",
+                "Aceleración constante positiva.",
+                "Rapidez nula.",
+                "Desplazamiento siempre positivo."
+            ]),
+            sol("Pregunta 20", [
+                raw`En un gráfico $x-t$, la pendiente es velocidad.`,
+                raw`Si la recta tiene pendiente negativa, esa velocidad es constante y negativa.`,
+                raw`Respuesta correcta: B.`
+            ]),
+
+            s("Resumen operativo", [
+                raw`Si tienes $x(t)$, puedes evaluar posiciones.`,
+                raw`Si tienes gráfico $x-t$, la pendiente entrega velocidad.`,
+                raw`Si tienes gráfico $v-t$, la pendiente entrega aceleración.`,
+                raw`Si tienes gráfico $v-t$, el área entrega desplazamiento.`,
+                raw`Si la aceleración es constante, la posición tiene forma cuadrática.`
+            ]),
+
+            s("Cierre", [
+                raw`La cinemática es una traducción entre representaciones.`,
+                raw`Una tabla, una función, un gráfico y una frase física deben decir lo mismo.`,
+                raw`El objetivo no es memorizar fórmulas aisladas.`,
+                raw`El objetivo es reconocer qué se debe observar y qué operación corresponde.`
+            ])
+        ];
+
+        const deck = document.getElementById("deck");
+
+        function createSlide(data, index) {
+            const slide = document.createElement("div");
+            slide.className = `slide ${data.dense ? "dense" : ""}`;
+            const content = document.createElement("div");
+            content.className = "slide-content";
+
+            if (data.type === "Portada") {
+                content.innerHTML = `<h1 class="portada-title">${data.title}</h1><p class="portada-subtitle">${data.subtitle}</p><div class="divider"></div><div class="math-block fragment">$\\boxed{\\text{Funciones, gráficos y movimiento deben leerse como una misma historia.}}$</div>`;
+            } else if (data.kind === "problem") {
+                content.innerHTML = `<div class="eyebrow">Pregunta tipo PAES/DEMRE · Clase 2</div><h1 class="slide-title">${data.title}</h1><div class="two-col"><div class="problem"><div class="context fragment">${data.statement}</div>${data.statement2 ? `<div class="context fragment">${data.statement2}</div>` : ""}<div class="fragment">${optionList(data.options)}</div></div>${data.visual ? `<div class="visual fragment">${data.visual}</div>` : `<div></div>`}</div>`;
+            } else if (data.kind === "solution") {
+                content.innerHTML = `<div class="eyebrow">Desarrollo paso a paso</div><h1 class="slide-title">${data.title}</h1><div class="solution">${data.lines.map(line => `<div class="line fragment">${line}</div>`).join("")}</div>`;
+            } else {
+                content.innerHTML = `<div class="eyebrow">PREUV · Cinemática</div><h1 class="slide-title">${data.title}</h1><ul class="content-list">${data.items.map(item => `<li>${item}</li>`).join("")}</ul>${data.visual ? `<div class="visual fragment">${data.visual}</div>` : ""}`;
+            }
+
+            slide.appendChild(content);
+            slide.classList.add(index === 0 ? "present" : "future");
+            return slide;
+        }
+
+        slidesData.forEach((data, index) => deck.appendChild(createSlide(data, index)));
+
+        const slides = Array.from(document.querySelectorAll(".slide"));
+        document.getElementById("total-slides").textContent = slides.length;
+        let currentSlide = 0;
+
+        function initializeFragments() {
+            slides.forEach(slide => {
+                slide.querySelectorAll(".content-list li").forEach(el => el.classList.add("fragment"));
+            });
+        }
+
+        function getFragments(slide) {
+            return Array.from(slide.querySelectorAll(".fragment"));
+        }
+
+        function revealAll(slide) {
+            getFragments(slide).forEach(fragment => fragment.classList.add("visible"));
+        }
+
+        function resetFragments(slide) {
+            getFragments(slide).forEach(fragment => fragment.classList.remove("visible"));
+        }
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove("past", "present", "future");
+                if (index < currentSlide) slide.classList.add("past");
+                else if (index === currentSlide) slide.classList.add("present");
+                else slide.classList.add("future");
+            });
+            resetFragments(slides[currentSlide]);
+            document.getElementById("current-slide").textContent = currentSlide + 1;
+        }
+
+        function nextSlide() {
+            const fragments = getFragments(slides[currentSlide]);
+            const next = fragments.find(fragment => !fragment.classList.contains("visible"));
+            if (next) {
+                next.classList.add("visible");
+                return;
+            }
+            if (currentSlide < slides.length - 1) {
+                currentSlide += 1;
+                updateSlides();
+            }
+        }
+
+        function prevSlide() {
+            const fragments = getFragments(slides[currentSlide]);
+            const visible = fragments.filter(fragment => fragment.classList.contains("visible"));
+            if (visible.length > 0) {
+                visible[visible.length - 1].classList.remove("visible");
+                return;
+            }
+            if (currentSlide > 0) {
+                currentSlide -= 1;
+                updateSlides();
+                revealAll(slides[currentSlide]);
+            }
+        }
+
+        document.getElementById("next-btn").addEventListener("click", nextSlide);
+        document.getElementById("prev-btn").addEventListener("click", prevSlide);
+        document.addEventListener("keydown", event => {
+            if (["ArrowRight", " ", "PageDown"].includes(event.key)) {
+                event.preventDefault();
+                nextSlide();
+            }
+            if (["ArrowLeft", "PageUp"].includes(event.key)) {
+                event.preventDefault();
+                prevSlide();
+            }
+            if (event.key === "Home") {
+                currentSlide = 0;
+                updateSlides();
+            }
+            if (event.key === "End") {
+                currentSlide = slides.length - 1;
+                updateSlides();
+                revealAll(slides[currentSlide]);
+            }
+        });
+        document.addEventListener("click", event => {
+            if (event.target.closest(".nav-button")) return;
+            if (event.target.closest(".slide.present")) nextSlide();
+        });
+        window.goToSlide = index => {
+            currentSlide = Math.max(0, Math.min(slides.length - 1, index));
+            updateSlides();
+            revealAll(slides[currentSlide]);
+        };
+
+        initializeFragments();
+        window.addEventListener("load", () => {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    { left: "$$", right: "$$", display: true },
+                    { left: "$", right: "$", display: false },
+                    { left: "\\(", right: "\\)", display: false },
+                    { left: "\\[", right: "\\]", display: true }
+                ],
+                throwOnError: false
+            });
+        });
+    </script>
+</body>
+</html>
