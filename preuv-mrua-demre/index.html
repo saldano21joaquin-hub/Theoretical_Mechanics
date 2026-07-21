@@ -245,7 +245,7 @@
                 <h1 class="portada-title">MRUA con ejercicios DEMRE</h1>
                 <p class="portada-subtitle">Movimiento rectilíneo, aceleración, fuerza neta y lectura de enunciados PAES.</p>
                 <div class="divider"></div>
-                <div class="math-block">Profesor Joaquín Saldaño</div>
+                <div class="panel" style="width: fit-content; margin: 0 auto; text-align: center;">Profesor Joaquín Saldaño</div>
             </div>
         </section>
 
@@ -254,9 +254,9 @@
                 <div class="eyebrow">Punto de partida</div>
                 <h2 class="slide-title">Antes de calcular, se identifica el tipo de movimiento</h2>
                 <div class="grid-3">
-                    <div class="panel fragment"><strong>MRU</strong><br>La velocidad permanece constante.<div class="math-block">a=0</div></div>
-                    <div class="panel fragment"><strong>MRUA</strong><br>La velocidad cambia de manera uniforme.<div class="math-block">a=\text{constante}</div></div>
-                    <div class="panel fragment"><strong>Reposo</strong><br>La posición no cambia respecto del sistema elegido.<div class="math-block">v=0,\quad a=0</div></div>
+                    <div class="panel fragment"><strong>MRU</strong><br>La velocidad permanece constante.<div class="math-block">\(a=0\)</div></div>
+                    <div class="panel fragment"><strong>MRUA</strong><br>La velocidad cambia de manera uniforme.<div class="math-block">\(a=\text{constante}\)</div></div>
+                    <div class="panel fragment"><strong>Reposo</strong><br>La posición no cambia respecto del sistema elegido.<div class="math-block">\(v=0,\quad a=0\)</div></div>
                 </div>
             </div>
         </section>
@@ -291,14 +291,86 @@
                 <div class="grid-2">
                     <div class="panel">
                         <div class="line fragment">La aceleración mide cambio de velocidad por unidad de tiempo.</div>
-                        <div class="math-block fragment">a=\frac{\Delta v}{\Delta t}</div>
+                        <div class="math-block fragment">\(a=\frac{\Delta v}{\Delta t}\)</div>
                         <div class="line fragment">Si \(a\) es constante, la velocidad cambia linealmente.</div>
-                        <div class="math-block fragment">v(t)=v_0+at</div>
+                        <div class="math-block fragment">\(v(t)=v_0+at\)</div>
                     </div>
                     <div class="panel">
                         <div class="line fragment">La posición acumula lo que hace la velocidad.</div>
-                        <div class="math-block fragment">x(t)=x_0+v_0t+\frac12at^2</div>
+                        <div class="math-block fragment">\(x(t)=x_0+v_0t+\frac12at^2\)</div>
                         <div class="line fragment">Por eso el gráfico \(x\)-\(t\) de un MRUA es parabólico.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Funciones del MRUA</div>
+                <h2 class="slide-title">Qué forma tiene cada gráfico</h2>
+                <div class="grid-2">
+                    <div class="panel">
+                        <div class="line fragment">Si \(a\) es constante, \(v(t)\) es una recta.</div>
+                        <div class="math-block fragment">\(v(t)=v_0+at\)</div>
+                        <div class="line fragment">La pendiente del gráfico \(v\)-\(t\) corresponde a la aceleración.</div>
+                    </div>
+                    <div class="image-box">
+                        <svg viewBox="0 0 520 280" role="img" aria-label="Grafico velocidad tiempo con recta creciente">
+                            <rect x="0" y="0" width="520" height="280" fill="#fff"/>
+                            <line x1="70" y1="220" x2="455" y2="220" stroke="#2c2c2c" stroke-width="3"/>
+                            <line x1="70" y1="220" x2="70" y2="45" stroke="#2c2c2c" stroke-width="3"/>
+                            <line x1="95" y1="190" x2="430" y2="70" stroke="#d1493f" stroke-width="5"/>
+                            <text x="452" y="238" font-size="22" fill="#2c2c2c">t</text>
+                            <text x="42" y="48" font-size="22" fill="#2c2c2c">v</text>
+                            <text x="235" y="90" font-size="20" fill="#8e672f">pendiente = aceleración</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Interpretación</div>
+                <h2 class="slide-title">El signo de la aceleración no se lee solo</h2>
+                <div class="grid-2">
+                    <div class="solution">
+                        <div class="line fragment">Si \(v>0\) y \(a>0\), la rapidez aumenta.</div>
+                        <div class="line fragment">Si \(v>0\) y \(a<0\), la rapidez disminuye.</div>
+                        <div class="line fragment">Si \(v<0\) y \(a<0\), la rapidez aumenta.</div>
+                        <div class="line fragment">Si \(v<0\) y \(a>0\), la rapidez disminuye.</div>
+                    </div>
+                    <div class="panel">
+                        <div class="line fragment">La rapidez depende del módulo de la velocidad.</div>
+                        <div class="math-block fragment">\(\text{rapidez}=|v|\)</div>
+                        <div class="line fragment">Por eso una aceleración negativa no significa necesariamente “frenar”.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Gráfico velocidad-tiempo</div>
+                <h2 class="slide-title">Área bajo la curva y desplazamiento</h2>
+                <div class="grid-2">
+                    <div class="image-box">
+                        <svg viewBox="0 0 520 300" role="img" aria-label="Area bajo grafico velocidad tiempo">
+                            <rect x="0" y="0" width="520" height="300" fill="#fff"/>
+                            <line x1="70" y1="230" x2="455" y2="230" stroke="#2c2c2c" stroke-width="3"/>
+                            <line x1="70" y1="230" x2="70" y2="45" stroke="#2c2c2c" stroke-width="3"/>
+                            <polygon points="105,205 420,90 420,230 105,230" fill="rgba(224,164,86,0.32)" stroke="#e0a456" stroke-width="2"/>
+                            <line x1="105" y1="205" x2="420" y2="90" stroke="#d1493f" stroke-width="5"/>
+                            <text x="455" y="248" font-size="22" fill="#2c2c2c">t</text>
+                            <text x="42" y="50" font-size="22" fill="#2c2c2c">v</text>
+                            <text x="210" y="185" font-size="21" fill="#8e672f">área = desplazamiento</text>
+                        </svg>
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">En un gráfico \(v\)-\(t\), el área representa desplazamiento.</div>
+                        <div class="math-block fragment">\(\Delta x=\text{área bajo }v(t)\)</div>
+                        <div class="line fragment">Si el gráfico está sobre el eje, el desplazamiento es positivo.</div>
+                        <div class="line fragment">Si está bajo el eje, el desplazamiento es negativo.</div>
                     </div>
                 </div>
             </div>
@@ -316,10 +388,29 @@
                     <div class="solution">
                         <div class="line fragment">Velocidad constante significa que no cambia ni módulo ni sentido.</div>
                         <div class="line fragment">Entonces la aceleración debe ser nula.</div>
-                        <div class="math-block fragment">\vec a=\vec 0</div>
+                        <div class="math-block fragment">\(\vec a=\vec 0\)</div>
                         <div class="line fragment">Por la segunda ley de Newton:</div>
-                        <div class="math-block fragment">\sum\vec F=m\vec a=\vec 0</div>
+                        <div class="math-block fragment">\(\sum\vec F=m\vec a=\vec 0\)</div>
                         <div class="line fragment">Clave: la fuerza neta es nula.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2024 · P8</div>
+                <h2 class="slide-title">Cinta transportadora: velocidad constante</h2>
+                <div class="grid-2">
+                    <div class="image-box">
+                        <img src="assets/fig_2024_p08_cinta_transportadora.png" alt="Caja sobre cinta transportadora PAES 2024">
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">La caja se mueve con la misma rapidez que la cinta.</div>
+                        <div class="line fragment">Para que no deslice respecto de la cinta, debe existir roce estático.</div>
+                        <div class="line fragment">Ese roce permite que la caja acompañe el movimiento de la superficie.</div>
+                        <div class="line fragment">No es roce cinético, porque no hay deslizamiento relativo entre caja y cinta.</div>
+                        <div class="line fragment">Fuente: DEMRE, PAES Regular Ciencias - Física 2024, Forma 163, pregunta 8.</div>
                     </div>
                 </div>
             </div>
@@ -336,10 +427,10 @@
                     </div>
                     <div class="solution">
                         <div class="line fragment">Elegimos derecha como sentido positivo.</div>
-                        <div class="math-block fragment">\sum F=15-5=10\,\mathrm{N}</div>
+                        <div class="math-block fragment">\(\sum F=15-5=10\,\mathrm{N}\)</div>
                         <div class="line fragment">Aplicamos \(\sum F=ma\).</div>
-                        <div class="math-block fragment">10=10a</div>
-                        <div class="math-block fragment">a=1\,\mathrm{m/s^2}</div>
+                        <div class="math-block fragment">\(10=10a\)</div>
+                        <div class="math-block fragment">\(a=1\,\mathrm{m/s^2}\)</div>
                         <div class="line fragment">La aceleración apunta hacia la derecha; su magnitud es \(1\,\mathrm{m/s^2}\).</div>
                     </div>
                 </div>
@@ -356,12 +447,32 @@
                     </div>
                     <div class="solution">
                         <div class="line fragment">El sistema que acelera es patinador más barra.</div>
-                        <div class="math-block fragment">m_{\text{total}}=60+20=80\,\mathrm{kg}</div>
+                        <div class="math-block fragment">\(m_{\text{total}}=60+20=80\,\mathrm{kg}\)</div>
                         <div class="line fragment">La aceleración tiene magnitud \(3\,\mathrm{m/s^2}\).</div>
-                        <div class="math-block fragment">F_{\text{neta}}=ma=80\cdot 3=240\,\mathrm{N}</div>
+                        <div class="math-block fragment">\(F_{\text{neta}}=ma=80\cdot 3=240\,\mathrm{N}\)</div>
                         <div class="line fragment">La barra empuja cuatro pilares con fuerzas iguales.</div>
-                        <div class="math-block fragment">F_{\text{pilar}}=\frac{240}{4}=60\,\mathrm{N}</div>
+                        <div class="math-block fragment">\(F_{\text{pilar}}=\frac{240}{4}=60\,\mathrm{N}\)</div>
                         <div class="line fragment">Fuente: DEMRE, PAES Regular Ciencias - Física 2024, Forma 163, pregunta 63.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2024 · P64</div>
+                <h2 class="slide-title">Fuerza constante y aceleración</h2>
+                <div class="grid-2">
+                    <div class="question">
+                        Sobre un objeto actúan una fuerza \(\vec F\) y otra fuerza constante. La pregunta compara afirmaciones sobre dirección de la aceleración, módulo de la aceleración y qué ocurre si \(\vec F\) cambia o se anula.
+                        <div class="source">Fuente: DEMRE, PAES Regular Ciencias - Física, Proceso de Admisión 2024, Forma 163, pregunta 64.</div>
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">La aceleración depende de la fuerza neta, no de una fuerza aislada.</div>
+                        <div class="math-block fragment">\(\vec a=\frac{\sum \vec F}{m}\)</div>
+                        <div class="line fragment">Si \(\vec F\) se anula, todavía puede quedar la otra fuerza constante.</div>
+                        <div class="line fragment">Entonces la aceleración puede seguir siendo constante.</div>
+                        <div class="line fragment">Clave: si \(F\) se anula, la aceleración es constante.</div>
                     </div>
                 </div>
             </div>
@@ -380,7 +491,7 @@
                         <div class="line fragment">Después de retirar \(F\), queda el roce cinético.</div>
                         <div class="line fragment">El roce apunta contra el movimiento.</div>
                         <div class="line fragment">Si la superficie y el bloque no cambian, el roce se modela constante.</div>
-                        <div class="math-block fragment">\sum \vec F=\vec F_R</div>
+                        <div class="math-block fragment">\(\sum \vec F=\vec F_R\)</div>
                         <div class="line fragment">La aceleración es constante y contraria a la velocidad: el bloque disminuye su rapidez.</div>
                     </div>
                 </div>
@@ -413,15 +524,34 @@
                 <div class="grid-2">
                     <div class="panel">
                         <div class="line fragment">Cerca de la superficie terrestre, el peso es aproximadamente constante.</div>
-                        <div class="math-block fragment">\vec P=m\vec g</div>
+                        <div class="math-block fragment">\(\vec P=m\vec g\)</div>
                         <div class="line fragment">Si la única fuerza relevante es el peso:</div>
-                        <div class="math-block fragment">m\vec a=m\vec g</div>
-                        <div class="math-block fragment">\vec a=\vec g</div>
+                        <div class="math-block fragment">\(m\vec a=m\vec g\)</div>
+                        <div class="math-block fragment">\(\vec a=\vec g\)</div>
                     </div>
                     <div class="panel">
                         <div class="line fragment">Por eso la caída libre se modela como MRUA.</div>
                         <div class="line fragment">No significa que todos los objetos reales caigan igual en cualquier situación.</div>
                         <div class="line fragment">Significa que estamos usando un modelo con resistencia del aire despreciable.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2027 · P8</div>
+                <h2 class="slide-title">Caída con paracaídas y resistencia del aire</h2>
+                <div class="grid-2">
+                    <div class="question">
+                        La pregunta compara la caída de personas con paracaídas y pide inferir el efecto de la resistencia del aire sobre el movimiento.
+                        <div class="source">Fuente: DEMRE, PAES de Invierno Ciencias - Física, Proceso de Admisión 2027, Forma 161, pregunta 8.</div>
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">El peso apunta hacia abajo.</div>
+                        <div class="line fragment">La resistencia del aire apunta contra el movimiento.</div>
+                        <div class="line fragment">Al abrirse el paracaídas, aumenta mucho la resistencia del aire.</div>
+                        <div class="line fragment">La aceleración deja de ser simplemente \(g\); el modelo de caída libre ya no basta.</div>
                     </div>
                 </div>
             </div>
@@ -448,6 +578,25 @@
 
         <section class="slide future">
             <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2025 · P63</div>
+                <h2 class="slide-title">Plano inclinado: condición para iniciar movimiento</h2>
+                <div class="grid-2">
+                    <div class="question">
+                        Una canasta permanece en reposo sobre un plano inclinado. Se pregunta qué ocurre si aumenta el ángulo de inclinación.
+                        <div class="source">Fuente: DEMRE, PAES Regular Ciencias - Física, Proceso de Admisión 2025, Forma 163, pregunta 63.</div>
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">Mientras está en reposo, la fuerza neta paralela al plano es nula.</div>
+                        <div class="line fragment">Al aumentar el ángulo, aumenta la componente del peso paralela al plano.</div>
+                        <div class="line fragment">El roce estático puede ajustarse solo hasta un máximo.</div>
+                        <div class="line fragment">Si se supera ese máximo, la canasta comienza a deslizar.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
                 <div class="eyebrow">Ejercicio DEMRE 2027 · P9</div>
                 <h2 class="slide-title">Reposo y roce estático</h2>
                 <div class="grid-2">
@@ -457,9 +606,28 @@
                     </div>
                     <div class="solution">
                         <div class="line fragment">Si el sistema sigue en reposo, entonces \(a=0\).</div>
-                        <div class="math-block fragment">\sum \vec F=\vec 0</div>
+                        <div class="math-block fragment">\(\sum \vec F=\vec 0\)</div>
                         <div class="line fragment">Al aumentar la masa colgante, aumenta la tensión.</div>
                         <div class="line fragment">Para mantener el reposo, el roce estático debe aumentar y oponerse a esa tendencia de movimiento.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2027 · P67</div>
+                <h2 class="slide-title">Libro contra una pared: equilibrio vertical</h2>
+                <div class="grid-2">
+                    <div class="question">
+                        Un libro es presionado horizontalmente contra una pared. Actúan peso, roce, fuerza aplicada y normal. Se pide la condición para que el libro no caiga.
+                        <div class="source">Fuente: DEMRE, PAES de Invierno Ciencias - Física, Proceso de Admisión 2027, Forma 161, pregunta 67.</div>
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">Para que no caiga, la aceleración vertical debe ser nula.</div>
+                        <div class="line fragment">Verticalmente actúan el peso hacia abajo y el roce hacia arriba.</div>
+                        <div class="math-block fragment">\(\vec F_{\text{peso}}+\vec F_{\text{roce}}=\vec 0\)</div>
+                        <div class="line fragment">Las fuerzas horizontales explican el contacto con la pared, pero no equilibran directamente el peso.</div>
                     </div>
                 </div>
             </div>
@@ -477,9 +645,28 @@
                         <div class="line fragment">La pregunta dice que ambos bloques aumentan su rapidez.</div>
                         <div class="line fragment">Eso exige aceleración en el sentido del movimiento.</div>
                         <div class="line fragment">Si \(m_2\) baja, sobre \(m_2\) actúan \(m_2g\) hacia abajo y \(T\) hacia arriba.</div>
-                        <div class="math-block fragment">m_2g-T>0</div>
-                        <div class="math-block fragment">T<m_2g</div>
+                        <div class="math-block fragment">\(m_2g-T>0\)</div>
+                        <div class="math-block fragment">\(T<m_2g\)</div>
                         <div class="line fragment">Fuente: DEMRE, PAES Regular Ciencias - Física 2025, Forma 163, pregunta 65.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2027 · P10</div>
+                <h2 class="slide-title">Variable dependiente e instrumento</h2>
+                <div class="grid-2">
+                    <div class="question">
+                        Se investiga la relación entre la masa de un objeto y la fuerza máxima horizontal que se le debe aplicar para que comience a moverse sobre una superficie con roce.
+                        <div class="source">Fuente: DEMRE, PAES de Invierno Ciencias - Física, Proceso de Admisión 2027, Forma 161, pregunta 10.</div>
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">La masa es la variable que se cambia.</div>
+                        <div class="line fragment">La fuerza máxima requerida es la variable que se mide.</div>
+                        <div class="line fragment">El instrumento para medir fuerza es un dinamómetro.</div>
+                        <div class="line fragment">Clave: dinamómetro.</div>
                     </div>
                 </div>
             </div>
@@ -537,7 +724,7 @@
                         <div class="line fragment">La normal y el peso permiten comparar masas.</div>
                         <div class="line fragment">La cuadrícula y los vectores están en la misma escala.</div>
                         <div class="line fragment">Si \(P_1\) y \(P_2\) tienen igual módulo, entonces las masas son iguales.</div>
-                        <div class="math-block fragment">P=mg</div>
+                        <div class="math-block fragment">\(P=mg\)</div>
                         <div class="line fragment">Clave DEMRE: ambos objetos tienen la misma masa.</div>
                         <div class="line fragment">Fuente: DEMRE, PAES de Invierno Ciencias - Física 2027, Forma 161, pregunta 65.</div>
                     </div>
@@ -560,6 +747,25 @@
                         <div class="line fragment">Entre \(12\,\mathrm{cm}\) y \(14\,\mathrm{cm}\), la fuerza está bajo el eje.</div>
                         <div class="line fragment">Por tanto, la fuerza es contraria al sentido de movimiento.</div>
                         <div class="line fragment">Fuente: DEMRE, PAES de Invierno Ciencias - Física 2027, Forma 161, pregunta 69. Pregunta marcada con asterisco en clavijero.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2027 · P72</div>
+                <h2 class="slide-title">Relación entre variables físicas</h2>
+                <div class="grid-2">
+                    <div class="image-box wide">
+                        <img src="assets/fig_2027_p72_tsunami.png" alt="Tsunami profundidad y rapidez PAES 2027">
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">La figura entrega valores de profundidad y rapidez de propagación.</div>
+                        <div class="line fragment">No hay que inventar una causa externa: se lee la relación representada.</div>
+                        <div class="line fragment">Al aumentar la profundidad del mar, aumenta la rapidez de propagación.</div>
+                        <div class="line fragment">Clave: a mayor profundidad, mayor rapidez de propagación.</div>
+                        <div class="line fragment">Fuente: DEMRE, PAES de Invierno Ciencias - Física 2027, Forma 161, pregunta 72.</div>
                     </div>
                 </div>
             </div>
@@ -592,9 +798,9 @@
                 <h2 class="slide-title">Qué debe quedar instalado</h2>
                 <div class="grid-2">
                     <div class="panel">
-                        <div class="math-block">v(t)=v_0+at</div>
-                        <div class="math-block">x(t)=x_0+v_0t+\frac12at^2</div>
-                        <div class="math-block">\sum\vec F=m\vec a</div>
+                        <div class="math-block">\(v(t)=v_0+at\)</div>
+                        <div class="math-block">\(x(t)=x_0+v_0t+\frac12at^2\)</div>
+                        <div class="math-block">\(\sum\vec F=m\vec a\)</div>
                     </div>
                     <div class="solution">
                         <div class="line fragment">El MRUA aparece cuando la aceleración se mantiene constante.</div>
@@ -609,7 +815,7 @@
     <div class="progress" id="progress"></div>
     <div class="controls">
         <button id="prev">Anterior</button>
-        <div class="counter" id="counter">1 / 18</div>
+        <div class="counter" id="counter">1 / 29</div>
         <button id="next">Siguiente</button>
     </div>
 
