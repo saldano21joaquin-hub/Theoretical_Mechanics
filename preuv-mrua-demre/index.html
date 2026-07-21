@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PREUV Clase 3 — MRUA con ejercicios DEMRE</title>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            overflow: hidden;
+            background: #ffffff;
+            color: #2c2c2c;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .presentation-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #ffffff;
+        }
+        .slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 34px 50px 94px;
+            background: linear-gradient(to bottom, #ffffff 0%, #f5f1e8 100%);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: transform 0.5s cubic-bezier(0.26, 0.86, 0.44, 0.985), opacity 0.22s ease;
+            pointer-events: none;
+        }
+        .slide.present { opacity: 1; transform: translateX(0); pointer-events: auto; }
+        .slide.past { opacity: 0; transform: translateX(-100%); }
+        .slide.future { opacity: 0; transform: translateX(100%); }
+        .slide::after {
+            content: "";
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            right: 18px;
+            bottom: 86px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+        .slide-content {
+            position: relative;
+            z-index: 1;
+            width: min(1160px, 100%);
+            max-height: calc(100vh - 128px);
+            text-align: center;
+        }
+        .eyebrow {
+            margin-bottom: 10px;
+            color: #b78b4d;
+            font-size: 0.86rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .slide-title {
+            margin-bottom: 16px;
+            color: #2c2c2c;
+            font-size: 2rem;
+            line-height: 1.15;
+        }
+        .portada-title {
+            margin-bottom: 18px;
+            font-size: 3.25rem;
+            line-height: 1.08;
+        }
+        .portada-subtitle {
+            max-width: 940px;
+            margin: 0 auto;
+            color: #5a5a5a;
+            font-size: 1.32rem;
+            line-height: 1.45;
+        }
+        .divider {
+            width: 180px;
+            height: 3px;
+            margin: 28px auto;
+            background: linear-gradient(to right, transparent, #e0a456, transparent);
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 20px;
+            align-items: center;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            align-items: stretch;
+        }
+        .panel, .solution, .question, .image-box {
+            border: 1px solid #ded6c9;
+            border-radius: 7px;
+            background: rgba(255,255,255,0.78);
+        }
+        .panel {
+            padding: 16px 18px;
+            text-align: left;
+            font-size: 1.04rem;
+            line-height: 1.42;
+        }
+        .panel strong { color: #9b7138; }
+        .question {
+            padding: 16px 18px;
+            text-align: left;
+            font-size: 1rem;
+            line-height: 1.38;
+        }
+        .question .source {
+            margin-top: 12px;
+            color: #7d725f;
+            font-size: 0.78rem;
+            line-height: 1.35;
+        }
+        .solution {
+            border-left: 5px solid #4f8f62;
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 1.05rem;
+            line-height: 1.42;
+        }
+        .line {
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(222,214,201,0.7);
+        }
+        .line:last-child { border-bottom: 0; }
+        .math-block {
+            width: fit-content;
+            max-width: 100%;
+            margin: 8px auto;
+            padding: 12px 16px;
+            border: 1px solid rgba(224,164,86,0.46);
+            border-radius: 7px;
+            background: #ffffff;
+            font-size: 1.08rem;
+        }
+        .image-box {
+            padding: 10px;
+            background: #ffffff;
+            text-align: center;
+        }
+        .image-box img {
+            display: block;
+            max-width: 100%;
+            max-height: 310px;
+            width: auto;
+            height: auto;
+            margin: 0 auto;
+            object-fit: contain;
+        }
+        .image-box.wide img { max-height: 250px; }
+        .image-box.tall img { max-height: 340px; }
+        .mini-list {
+            display: grid;
+            gap: 9px;
+            text-align: left;
+            font-size: 1.08rem;
+            line-height: 1.42;
+        }
+        .tag {
+            display: inline-block;
+            margin-bottom: 8px;
+            padding: 5px 9px;
+            border: 1px solid rgba(224,164,86,0.55);
+            border-radius: 999px;
+            color: #8e672f;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .fragment {
+            opacity: 0;
+            transform: translateY(9px);
+            transition: opacity 0.22s ease, transform 0.22s ease;
+        }
+        .fragment.visible { opacity: 1; transform: translateY(0); }
+        .progress {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            z-index: 10;
+            height: 5px;
+            width: 0%;
+            background: #e0a456;
+            transition: width 0.25s ease;
+        }
+        .controls {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 18px;
+            z-index: 11;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+        }
+        button {
+            border: 1px solid #d6c7b4;
+            border-radius: 7px;
+            background: #ffffff;
+            color: #2c2c2c;
+            padding: 10px 15px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        button:hover { border-color: #e0a456; }
+        .counter {
+            min-width: 92px;
+            color: #6f6a61;
+            font-size: 0.92rem;
+            text-align: center;
+        }
+        svg { display: block; width: 100%; height: auto; }
+        @media (max-width: 820px) {
+            .slide { padding: 28px 24px 88px; }
+            .slide::after { left: 12px; right: 12px; top: 12px; bottom: 78px; }
+            .slide-title { font-size: 1.48rem; }
+            .portada-title { font-size: 2.25rem; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 12px; }
+            .panel, .question, .solution { font-size: 0.93rem; }
+            .image-box img { max-height: 210px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <section class="slide present">
+            <div class="slide-content">
+                <div class="eyebrow">PREUV · Clase 3</div>
+                <h1 class="portada-title">MRUA con ejercicios DEMRE</h1>
+                <p class="portada-subtitle">Movimiento rectilíneo, aceleración, fuerza neta y lectura de enunciados PAES.</p>
+                <div class="divider"></div>
+                <div class="math-block">Profesor Joaquín Saldaño</div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Punto de partida</div>
+                <h2 class="slide-title">Antes de calcular, se identifica el tipo de movimiento</h2>
+                <div class="grid-3">
+                    <div class="panel fragment"><strong>MRU</strong><br>La velocidad permanece constante.<div class="math-block">a=0</div></div>
+                    <div class="panel fragment"><strong>MRUA</strong><br>La velocidad cambia de manera uniforme.<div class="math-block">a=\text{constante}</div></div>
+                    <div class="panel fragment"><strong>Reposo</strong><br>La posición no cambia respecto del sistema elegido.<div class="math-block">v=0,\quad a=0</div></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Método de lectura</div>
+                <h2 class="slide-title">Qué se observa en una pregunta PAES</h2>
+                <div class="grid-2">
+                    <div class="panel">
+                        <div class="mini-list">
+                            <div class="fragment"><span class="tag">1</span> ¿La rapidez es constante, aumenta o disminuye?</div>
+                            <div class="fragment"><span class="tag">2</span> ¿El movimiento mantiene el mismo sentido?</div>
+                            <div class="fragment"><span class="tag">3</span> ¿La fuerza neta es nula o distinta de cero?</div>
+                            <div class="fragment"><span class="tag">4</span> ¿La aceleración apunta en el mismo sentido que la velocidad?</div>
+                        </div>
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">Si la velocidad es constante: \(a=0\).</div>
+                        <div class="line fragment">Si la rapidez aumenta: \(a\) tiene componente en el sentido del movimiento.</div>
+                        <div class="line fragment">Si la rapidez disminuye: \(a\) apunta en sentido contrario al movimiento.</div>
+                        <div class="line fragment">Si la fuerza neta es constante: \(a\) es constante.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Modelo matemático</div>
+                <h2 class="slide-title">De la aceleración constante a las funciones</h2>
+                <div class="grid-2">
+                    <div class="panel">
+                        <div class="line fragment">La aceleración mide cambio de velocidad por unidad de tiempo.</div>
+                        <div class="math-block fragment">a=\frac{\Delta v}{\Delta t}</div>
+                        <div class="line fragment">Si \(a\) es constante, la velocidad cambia linealmente.</div>
+                        <div class="math-block fragment">v(t)=v_0+at</div>
+                    </div>
+                    <div class="panel">
+                        <div class="line fragment">La posición acumula lo que hace la velocidad.</div>
+                        <div class="math-block fragment">x(t)=x_0+v_0t+\frac12at^2</div>
+                        <div class="line fragment">Por eso el gráfico \(x\)-\(t\) de un MRUA es parabólico.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2024 · P10</div>
+                <h2 class="slide-title">Gota de lluvia con velocidad constante</h2>
+                <div class="grid-2">
+                    <div class="question">
+                        Una gota de agua cae verticalmente en un día lluvioso sin viento. Se estima que se mueve con velocidad constante. Si \(\vec P\) representa el peso y \(\vec F_R\) el roce con el aire, ¿cómo debe ser la fuerza neta para que esa estimación sea correcta?
+                        <div class="source">Fuente: DEMRE, PAES Regular Ciencias - Física, Proceso de Admisión 2024, Forma 163, pregunta 10.</div>
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">Velocidad constante significa que no cambia ni módulo ni sentido.</div>
+                        <div class="line fragment">Entonces la aceleración debe ser nula.</div>
+                        <div class="math-block fragment">\vec a=\vec 0</div>
+                        <div class="line fragment">Por la segunda ley de Newton:</div>
+                        <div class="math-block fragment">\sum\vec F=m\vec a=\vec 0</div>
+                        <div class="line fragment">Clave: la fuerza neta es nula.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2024 · P11</div>
+                <h2 class="slide-title">Fuerza neta y aceleración</h2>
+                <div class="grid-2">
+                    <div class="question">
+                        Sobre un bloque de \(10\,\mathrm{kg}\) actúan dos fuerzas horizontales: \(15\,\mathrm{N}\) hacia la derecha y \(5\,\mathrm{N}\) hacia la izquierda. ¿Cuál es la magnitud de la aceleración?
+                        <div class="source">Fuente: DEMRE, PAES Regular Ciencias - Física, Proceso de Admisión 2024, Forma 163, pregunta 11.</div>
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">Elegimos derecha como sentido positivo.</div>
+                        <div class="math-block fragment">\sum F=15-5=10\,\mathrm{N}</div>
+                        <div class="line fragment">Aplicamos \(\sum F=ma\).</div>
+                        <div class="math-block fragment">10=10a</div>
+                        <div class="math-block fragment">a=1\,\mathrm{m/s^2}</div>
+                        <div class="line fragment">La aceleración apunta hacia la derecha; su magnitud es \(1\,\mathrm{m/s^2}\).</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2024 · P63</div>
+                <h2 class="slide-title">Sistema y fuerza por contacto</h2>
+                <div class="grid-2">
+                    <div class="image-box">
+                        <img src="assets/fig_2024_p63_patinador_pilares.png" alt="Patinador con barra y pilares PAES 2024">
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">El sistema que acelera es patinador más barra.</div>
+                        <div class="math-block fragment">m_{\text{total}}=60+20=80\,\mathrm{kg}</div>
+                        <div class="line fragment">La aceleración tiene magnitud \(3\,\mathrm{m/s^2}\).</div>
+                        <div class="math-block fragment">F_{\text{neta}}=ma=80\cdot 3=240\,\mathrm{N}</div>
+                        <div class="line fragment">La barra empuja cuatro pilares con fuerzas iguales.</div>
+                        <div class="math-block fragment">F_{\text{pilar}}=\frac{240}{4}=60\,\mathrm{N}</div>
+                        <div class="line fragment">Fuente: DEMRE, PAES Regular Ciencias - Física 2024, Forma 163, pregunta 63.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2025 · P67</div>
+                <h2 class="slide-title">Cuando la fuerza deja de actuar</h2>
+                <div class="grid-2">
+                    <div class="question">
+                        Un bloque se mueve con aceleración constante por una fuerza \(F\). Luego \(F\) deja de actuar. El bloque continúa moviéndose sobre una superficie con roce hasta detenerse. ¿Cómo se describe la fuerza neta después de retirar \(F\)?
+                        <div class="source">Fuente: DEMRE, PAES Regular Ciencias - Física, Proceso de Admisión 2025, Forma 163, pregunta 67. Pregunta marcada con asterisco en clavijero.</div>
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">Después de retirar \(F\), queda el roce cinético.</div>
+                        <div class="line fragment">El roce apunta contra el movimiento.</div>
+                        <div class="line fragment">Si la superficie y el bloque no cambian, el roce se modela constante.</div>
+                        <div class="math-block fragment">\sum \vec F=\vec F_R</div>
+                        <div class="line fragment">La aceleración es constante y contraria a la velocidad: el bloque disminuye su rapidez.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2024 · P65</div>
+                <h2 class="slide-title">Tabla de tiempos: inferencia experimental</h2>
+                <div class="grid-2">
+                    <div class="image-box tall">
+                        <img src="assets/fig_2024_p65_tabla_tiempos.png" alt="Tabla de tiempos de detención PAES 2024">
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">La pregunta compara el tiempo que tarda un bloque en detenerse.</div>
+                        <div class="line fragment">Lo que cambia entre ensayos es el área de contacto.</div>
+                        <div class="line fragment">Los tiempos medidos son prácticamente iguales.</div>
+                        <div class="line fragment">Conclusión: en ese procedimiento, el tiempo hasta detenerse no depende apreciablemente del área de contacto.</div>
+                        <div class="line fragment">Fuente: DEMRE, PAES Regular Ciencias - Física 2024, Forma 163, pregunta 65.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Puente conceptual</div>
+                <h2 class="slide-title">Caída libre: MRUA cuando se desprecia el aire</h2>
+                <div class="grid-2">
+                    <div class="panel">
+                        <div class="line fragment">Cerca de la superficie terrestre, el peso es aproximadamente constante.</div>
+                        <div class="math-block fragment">\vec P=m\vec g</div>
+                        <div class="line fragment">Si la única fuerza relevante es el peso:</div>
+                        <div class="math-block fragment">m\vec a=m\vec g</div>
+                        <div class="math-block fragment">\vec a=\vec g</div>
+                    </div>
+                    <div class="panel">
+                        <div class="line fragment">Por eso la caída libre se modela como MRUA.</div>
+                        <div class="line fragment">No significa que todos los objetos reales caigan igual en cualquier situación.</div>
+                        <div class="line fragment">Significa que estamos usando un modelo con resistencia del aire despreciable.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2024 · P9</div>
+                <h2 class="slide-title">Galileo y control de variables</h2>
+                <div class="grid-2">
+                    <div class="question">
+                        Galileo habría dejado caer objetos desde distintas alturas y también habría usado planos inclinados. La pregunta apunta a reconocer qué se logra al estudiar el fenómeno en contextos distintos.
+                        <div class="source">Fuente: DEMRE, PAES Regular Ciencias - Física, Proceso de Admisión 2024, Forma 163, pregunta 9.</div>
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">No se trata solo de obtener una fórmula.</div>
+                        <div class="line fragment">Se busca separar lo esencial del fenómeno de las condiciones particulares.</div>
+                        <div class="line fragment">El plano inclinado permite hacer más lento el cambio y medir mejor.</div>
+                        <div class="line fragment">La idea física es reconocer una relación reproducible entre movimiento y tiempo.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2027 · P9</div>
+                <h2 class="slide-title">Reposo y roce estático</h2>
+                <div class="grid-2">
+                    <div class="question">
+                        Un sistema permanece en reposo mientras se aumenta la masa que cuelga de una cuerda. ¿Qué ocurre con la fuerza de roce estático sobre el cuerpo apoyado?
+                        <div class="source">Fuente: DEMRE, PAES de Invierno Ciencias - Física, Proceso de Admisión 2027, Forma 161, pregunta 9.</div>
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">Si el sistema sigue en reposo, entonces \(a=0\).</div>
+                        <div class="math-block fragment">\sum \vec F=\vec 0</div>
+                        <div class="line fragment">Al aumentar la masa colgante, aumenta la tensión.</div>
+                        <div class="line fragment">Para mantener el reposo, el roce estático debe aumentar y oponerse a esa tendencia de movimiento.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2025 · P65</div>
+                <h2 class="slide-title">Sistema de bloques: rapidez creciente</h2>
+                <div class="grid-2">
+                    <div class="image-box">
+                        <img src="assets/fig_2025_p65_bloques_polea.png" alt="Sistema de bloques con polea PAES 2025">
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">La pregunta dice que ambos bloques aumentan su rapidez.</div>
+                        <div class="line fragment">Eso exige aceleración en el sentido del movimiento.</div>
+                        <div class="line fragment">Si \(m_2\) baja, sobre \(m_2\) actúan \(m_2g\) hacia abajo y \(T\) hacia arriba.</div>
+                        <div class="math-block fragment">m_2g-T>0</div>
+                        <div class="math-block fragment">T<m_2g</div>
+                        <div class="line fragment">Fuente: DEMRE, PAES Regular Ciencias - Física 2025, Forma 163, pregunta 65.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2027 · P7</div>
+                <h2 class="slide-title">Variables en un experimento</h2>
+                <div class="grid-2">
+                    <div class="image-box">
+                        <img src="assets/fig_2027_p07_bloque_resorte.png" alt="Bloque con resorte PAES Invierno 2027">
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">Se cambia el bloque por otros de distinta masa.</div>
+                        <div class="line fragment">Por tanto, la masa es la variable modificada.</div>
+                        <div class="line fragment">Se mide la aceleración que alcanza el bloque.</div>
+                        <div class="line fragment">La aceleración es la variable medida.</div>
+                        <div class="line fragment">La superficie debe mantenerse igual: variable controlada.</div>
+                        <div class="line fragment">Fuente: DEMRE, PAES de Invierno Ciencias - Física 2027, Forma 161, pregunta 7.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2027 · P64</div>
+                <h2 class="slide-title">Ángulo de una fuerza y aceleración</h2>
+                <div class="grid-2">
+                    <div class="image-box">
+                        <img src="assets/fig_2027_p64_maleta_fuerza.png" alt="Maleta con fuerza aplicada en ángulo PAES 2027">
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">La magnitud de \(\vec F\) se mantiene fija.</div>
+                        <div class="line fragment">Lo que cambia es el ángulo \(\alpha\).</div>
+                        <div class="line fragment">Se mide la aceleración de la maleta.</div>
+                        <div class="line fragment">El objetivo abordable debe relacionar ángulo y fuerza neta/aceleración, no peso ni magnitud de \(F\).</div>
+                        <div class="line fragment">Clave: efecto del ángulo con que se tira sobre la fuerza neta.</div>
+                        <div class="line fragment">Fuente: DEMRE, PAES de Invierno Ciencias - Física 2027, Forma 161, pregunta 64.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2027 · P65</div>
+                <h2 class="slide-title">Vectores y fuerza neta</h2>
+                <div class="grid-2">
+                    <div class="image-box wide">
+                        <img src="assets/fig_2027_p65_vectores_objetos.png" alt="Vectores de fuerzas en dos objetos PAES 2027">
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">La normal y el peso permiten comparar masas.</div>
+                        <div class="line fragment">La cuadrícula y los vectores están en la misma escala.</div>
+                        <div class="line fragment">Si \(P_1\) y \(P_2\) tienen igual módulo, entonces las masas son iguales.</div>
+                        <div class="math-block fragment">P=mg</div>
+                        <div class="line fragment">Clave DEMRE: ambos objetos tienen la misma masa.</div>
+                        <div class="line fragment">Fuente: DEMRE, PAES de Invierno Ciencias - Física 2027, Forma 161, pregunta 65.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Ejercicio DEMRE 2027 · P69</div>
+                <h2 class="slide-title">Gráfico fuerza-posición</h2>
+                <div class="grid-2">
+                    <div class="image-box tall">
+                        <img src="assets/fig_2027_p69_fuerza_posicion.png" alt="Gráfico de fuerza en función de posición PAES 2027">
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">El auto avanza siempre en el mismo sentido.</div>
+                        <div class="line fragment">Fuerza positiva: acelera en el sentido del movimiento.</div>
+                        <div class="line fragment">Fuerza negativa: acelera en sentido contrario al movimiento.</div>
+                        <div class="line fragment">Entre \(12\,\mathrm{cm}\) y \(14\,\mathrm{cm}\), la fuerza está bajo el eje.</div>
+                        <div class="line fragment">Por tanto, la fuerza es contraria al sentido de movimiento.</div>
+                        <div class="line fragment">Fuente: DEMRE, PAES de Invierno Ciencias - Física 2027, Forma 161, pregunta 69. Pregunta marcada con asterisco en clavijero.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Resumen operativo</div>
+                <h2 class="slide-title">Frases del enunciado y traducción física</h2>
+                <div class="grid-2">
+                    <div class="solution">
+                        <div class="line fragment">“Velocidad constante” \(\Rightarrow a=0\Rightarrow \sum F=0\).</div>
+                        <div class="line fragment">“Aumenta su rapidez” \(\Rightarrow a\) en el sentido del movimiento.</div>
+                        <div class="line fragment">“Disminuye su rapidez” \(\Rightarrow a\) en sentido contrario al movimiento.</div>
+                        <div class="line fragment">“Permanece en reposo” \(\Rightarrow \sum F=0\).</div>
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">“Aceleración constante” \(\Rightarrow\) MRUA.</div>
+                        <div class="line fragment">“Roce cinético constante” \(\Rightarrow\) desaceleración constante.</div>
+                        <div class="line fragment">“Se mide aceleración” \(\Rightarrow\) variable dependiente.</div>
+                        <div class="line fragment">“Se cambia masa/ángulo/fuerza” \(\Rightarrow\) variable independiente.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide future">
+            <div class="slide-content">
+                <div class="eyebrow">Cierre</div>
+                <h2 class="slide-title">Qué debe quedar instalado</h2>
+                <div class="grid-2">
+                    <div class="panel">
+                        <div class="math-block">v(t)=v_0+at</div>
+                        <div class="math-block">x(t)=x_0+v_0t+\frac12at^2</div>
+                        <div class="math-block">\sum\vec F=m\vec a</div>
+                    </div>
+                    <div class="solution">
+                        <div class="line fragment">El MRUA aparece cuando la aceleración se mantiene constante.</div>
+                        <div class="line fragment">En PAES, muchas preguntas no piden reemplazar datos: piden leer el estado del movimiento.</div>
+                        <div class="line fragment">La respuesta correcta debe ser compatible con velocidad, aceleración y fuerza neta al mismo tiempo.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="progress" id="progress"></div>
+    <div class="controls">
+        <button id="prev">Anterior</button>
+        <div class="counter" id="counter">1 / 18</div>
+        <button id="next">Siguiente</button>
+    </div>
+
+    <script>
+        const slides = Array.from(document.querySelectorAll(".slide"));
+        let currentSlide = 0;
+        let currentFragment = 0;
+
+        function fragmentsFor(slideIndex) {
+            return Array.from(slides[slideIndex].querySelectorAll(".fragment"));
+        }
+
+        function renderMath() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "$", right: "$", display: false}
+                ],
+                throwOnError: false
+            });
+        }
+
+        function update() {
+            slides.forEach((slide, index) => {
+                slide.classList.toggle("present", index === currentSlide);
+                slide.classList.toggle("past", index < currentSlide);
+                slide.classList.toggle("future", index > currentSlide);
+                const fragments = Array.from(slide.querySelectorAll(".fragment"));
+                fragments.forEach((fragment, fragmentIndex) => {
+                    fragment.classList.toggle("visible", index < currentSlide || (index === currentSlide && fragmentIndex < currentFragment));
+                });
+            });
+            document.getElementById("counter").textContent = `${currentSlide + 1} / ${slides.length}`;
+            document.getElementById("progress").style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+        }
+
+        function next() {
+            const fragments = fragmentsFor(currentSlide);
+            if (currentFragment < fragments.length) {
+                currentFragment += 1;
+            } else if (currentSlide < slides.length - 1) {
+                currentSlide += 1;
+                currentFragment = 0;
+            }
+            update();
+        }
+
+        function prev() {
+            if (currentFragment > 0) {
+                currentFragment -= 1;
+            } else if (currentSlide > 0) {
+                currentSlide -= 1;
+                currentFragment = fragmentsFor(currentSlide).length;
+            }
+            update();
+        }
+
+        document.getElementById("next").addEventListener("click", next);
+        document.getElementById("prev").addEventListener("click", prev);
+        document.addEventListener("keydown", (event) => {
+            if (["ArrowRight", "PageDown", " "].includes(event.key)) {
+                event.preventDefault();
+                next();
+            }
+            if (["ArrowLeft", "PageUp"].includes(event.key)) {
+                event.preventDefault();
+                prev();
+            }
+        });
+
+        renderMath();
+        update();
+    </script>
+</body>
+</html>
