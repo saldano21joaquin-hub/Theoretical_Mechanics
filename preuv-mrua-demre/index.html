@@ -547,11 +547,30 @@
                 <div class="grid-2">
                     <div class="problem">
                         Se suelta una piedra desde una altura de \(45\,\mathrm{m}\). Desprecia el aire y usa \(g=10\,\mathrm{m/s^2}\). ¿Cuánto tarda en llegar al suelo?
+                        <div class="image-box" style="margin-top: 12px;">
+                            <svg viewBox="0 0 420 280" aria-label="Referencias para caída libre">
+                                <rect width="420" height="280" fill="#fff"/>
+                                <line x1="110" y1="230" x2="110" y2="55" stroke="#2c2c2c" stroke-width="4"/>
+                                <polygon points="110,55 98,80 122,80" fill="#2c2c2c"/>
+                                <line x1="90" y1="230" x2="320" y2="230" stroke="#7d725f" stroke-width="3"/>
+                                <line x1="90" y1="80" x2="320" y2="80" stroke="#b78b4d" stroke-width="3" stroke-dasharray="9 7"/>
+                                <circle cx="210" cy="80" r="13" fill="#d1493f"/>
+                                <line x1="210" y1="98" x2="210" y2="165" stroke="#d1493f" stroke-width="4"/>
+                                <polygon points="210,165 198,143 222,143" fill="#d1493f"/>
+                                <text x="125" y="65" font-size="19" fill="#2c2c2c">+y</text>
+                                <text x="230" y="88" font-size="18" fill="#2c2c2c">y0 = 45 m</text>
+                                <text x="230" y="236" font-size="18" fill="#2c2c2c">y = 0</text>
+                                <text x="224" y="140" font-size="18" fill="#d1493f">g hacia abajo</text>
+                            </svg>
+                        </div>
                     </div>
                     <div class="solution">
                         <div class="line fragment">Eje positivo hacia arriba: \(a=-10\,\mathrm{m/s^2}\).</div>
                         <div class="line fragment">Tomamos \(y_0=45\,\mathrm{m}\), \(y=0\), \(v_0=0\).</div>
-                        <div class="math-block fragment">\(0=45+\frac12(-10)t^2\)</div>
+                        <div class="line fragment">Fórmula inicial:</div>
+                        <div class="math-block fragment">\(y=y_0+v_0t+\frac12at^2\)</div>
+                        <div class="math-block fragment">\(0=45+0\cdot t+\frac12(-10)t^2\)</div>
+                        <div class="math-block fragment">\(0=45-5t^2\)</div>
                         <div class="math-block fragment">\(5t^2=45\)</div>
                         <div class="math-block fragment">\(t=3\,\mathrm{s}\)</div>
                     </div>
@@ -569,6 +588,7 @@
                     </div>
                     <div class="solution">
                         <div class="line fragment">Ya encontramos \(t=3\,\mathrm{s}\).</div>
+                        <div class="line fragment">Fórmula inicial:</div>
                         <div class="math-block fragment">\(v(t)=v_0+at\)</div>
                         <div class="math-block fragment">\(v=0+(-10)(3)\)</div>
                         <div class="math-block fragment">\(v=-30\,\mathrm{m/s}\)</div>
@@ -615,11 +635,32 @@
                 <div class="grid-2">
                     <div class="problem">
                         Una pelota se lanza verticalmente hacia arriba con \(v_0=20\,\mathrm{m/s}\). Usa \(g=10\,\mathrm{m/s^2}\). ¿Cuánto tarda en llegar a su altura máxima?
+                        <div class="image-box" style="margin-top: 12px;">
+                            <svg viewBox="0 0 420 280" aria-label="Referencias para lanzamiento vertical">
+                                <rect width="420" height="280" fill="#fff"/>
+                                <line x1="105" y1="235" x2="105" y2="45" stroke="#2c2c2c" stroke-width="4"/>
+                                <polygon points="105,45 93,70 117,70" fill="#2c2c2c"/>
+                                <line x1="82" y1="235" x2="330" y2="235" stroke="#7d725f" stroke-width="3"/>
+                                <line x1="82" y1="76" x2="330" y2="76" stroke="#b78b4d" stroke-width="3" stroke-dasharray="9 7"/>
+                                <circle cx="210" cy="235" r="12" fill="#d1493f"/>
+                                <circle cx="210" cy="76" r="10" fill="#d1493f"/>
+                                <line x1="210" y1="215" x2="210" y2="145" stroke="#4f8f62" stroke-width="4"/>
+                                <polygon points="210,145 198,167 222,167" fill="#4f8f62"/>
+                                <line x1="250" y1="95" x2="250" y2="165" stroke="#d1493f" stroke-width="4"/>
+                                <polygon points="250,165 238,143 262,143" fill="#d1493f"/>
+                                <text x="122" y="62" font-size="18">+y</text>
+                                <text x="230" y="241" font-size="18">y0 = 0</text>
+                                <text x="230" y="82" font-size="18">y = ymax, v = 0</text>
+                                <text x="260" y="135" font-size="18" fill="#d1493f">g</text>
+                            </svg>
+                        </div>
                     </div>
                     <div class="solution">
                         <div class="line fragment">En la altura máxima la velocidad es cero.</div>
+                        <div class="line fragment">Fórmula inicial:</div>
                         <div class="math-block fragment">\(v=v_0+at\)</div>
                         <div class="math-block fragment">\(0=20-10t\)</div>
+                        <div class="math-block fragment">\(10t=20\)</div>
                         <div class="math-block fragment">\(t=2\,\mathrm{s}\)</div>
                     </div>
                 </div>
@@ -635,6 +676,12 @@
                         Con los mismos datos: \(v_0=20\,\mathrm{m/s}\), \(a=-10\,\mathrm{m/s^2}\), \(t=2\,\mathrm{s}\). ¿Qué altura máxima alcanza respecto del punto de lanzamiento?
                     </div>
                     <div class="solution">
+                        <div class="line fragment">Fórmula inicial:</div>
+                        <div class="math-block fragment">\(y=y_0+v_0t+\frac12at^2\)</div>
+                        <div class="line fragment">Pasamos \(y_0\) restando al lado izquierdo:</div>
+                        <div class="math-block fragment">\(y-y_0=v_0t+\frac12at^2\)</div>
+                        <div class="line fragment">Definimos el cambio de altura:</div>
+                        <div class="math-block fragment">\(\Delta y=y-y_0\)</div>
                         <div class="math-block fragment">\(\Delta y=v_0t+\frac12at^2\)</div>
                         <div class="math-block fragment">\(\Delta y=20(2)+\frac12(-10)(2)^2\)</div>
                         <div class="math-block fragment">\(\Delta y=40-20\)</div>
@@ -654,9 +701,18 @@
                     </div>
                     <div class="solution">
                         <div class="line fragment">Al volver al mismo nivel, \(\Delta y=0\).</div>
+                        <div class="line fragment">Fórmula inicial:</div>
+                        <div class="math-block fragment">\(y=y_0+v_0t+\frac12at^2\)</div>
+                        <div class="math-block fragment">\(y-y_0=v_0t+\frac12at^2\)</div>
+                        <div class="math-block fragment">\(\Delta y=v_0t+\frac12at^2\)</div>
+                        <div class="math-block fragment">\(0=20t+\frac12(-10)t^2\)</div>
                         <div class="math-block fragment">\(0=20t-5t^2\)</div>
+                        <div class="line fragment">Forma factorizada:</div>
                         <div class="math-block fragment">\(0=t(20-5t)\)</div>
-                        <div class="line fragment">Las soluciones son \(t=0\) y \(t=4\,\mathrm{s}\).</div>
+                        <div class="math-block fragment">\(t=0\quad\text{o}\quad 20-5t=0\)</div>
+                        <div class="math-block fragment">\(t=0\quad\text{o}\quad t=4\,\mathrm{s}\)</div>
+                        <div class="line fragment">La ecuación general da lo mismo: \(5t^2-20t+0=0\).</div>
+                        <div class="math-block fragment">\(t=\frac{20\pm\sqrt{(-20)^2-4(5)(0)}}{2(5)}=\frac{20\pm20}{10}\)</div>
                         <div class="line fragment">El tiempo de vuelo es \(4\,\mathrm{s}\).</div>
                     </div>
                 </div>
@@ -733,7 +789,10 @@
                         Un automóvil parte desde el reposo y alcanza \(24\,\mathrm{m/s}\) en \(6\,\mathrm{s}\), moviéndose en línea recta con aceleración constante. Determina \(a\) y \(\Delta x\).
                     </div>
                     <div class="solution">
+                        <div class="line fragment">Fórmula inicial para aceleración media:</div>
+                        <div class="math-block fragment">\(a=\frac{v-v_0}{\Delta t}\)</div>
                         <div class="math-block fragment">\(a=\frac{24-0}{6}=4\,\mathrm{m/s^2}\)</div>
+                        <div class="line fragment">Fórmula inicial para desplazamiento:</div>
                         <div class="math-block fragment">\(\Delta x=v_0t+\frac12at^2\)</div>
                         <div class="math-block fragment">\(\Delta x=0+\frac12(4)(6)^2\)</div>
                         <div class="math-block fragment">\(\Delta x=72\,\mathrm{m}\)</div>
@@ -751,8 +810,10 @@
                         Una bicicleta avanza a \(12\,\mathrm{m/s}\) y se detiene uniformemente en \(4\,\mathrm{s}\). Determina su aceleración y el desplazamiento durante la detención.
                     </div>
                     <div class="solution">
+                        <div class="line fragment">Fórmula inicial para aceleración media:</div>
+                        <div class="math-block fragment">\(a=\frac{v-v_0}{t}\)</div>
                         <div class="math-block fragment">\(a=\frac{0-12}{4}=-3\,\mathrm{m/s^2}\)</div>
-                        <div class="line fragment">La velocidad promedio en MRUA es:</div>
+                        <div class="line fragment">Fórmula inicial de velocidad promedio en MRUA:</div>
                         <div class="math-block fragment">\(\bar v=\frac{v_0+v}{2}=\frac{12+0}{2}=6\,\mathrm{m/s}\)</div>
                         <div class="math-block fragment">\(\Delta x=\bar v t=6(4)=24\,\mathrm{m}\)</div>
                     </div>
@@ -770,6 +831,8 @@
                     </div>
                     <div class="solution">
                         <div class="line fragment">El área bajo una recta en \(v\)-\(t\) es un trapecio.</div>
+                        <div class="line fragment">Fórmula inicial:</div>
+                        <div class="math-block fragment">\(\Delta x=\frac{v_0+v_f}{2}\,\Delta t\)</div>
                         <div class="math-block fragment">\(\Delta x=\frac{(4+10)}{2}\cdot 3\)</div>
                         <div class="math-block fragment">\(\Delta x=21\,\mathrm{m}\)</div>
                     </div>
@@ -786,8 +849,9 @@
                         La posición de un móvil está dada por \(x(t)=3+2t+4t^2\), con unidades SI. Determina \(x_0\), \(v_0\) y \(a\).
                     </div>
                     <div class="solution">
-                        <div class="line fragment">Comparamos con:</div>
+                        <div class="line fragment">Fórmula inicial del MRUA:</div>
                         <div class="math-block fragment">\(x(t)=x_0+v_0t+\frac12at^2\)</div>
+                        <div class="line fragment">Comparamos con \(x(t)=3+2t+4t^2\).</div>
                         <div class="math-block fragment">\(x_0=3\,\mathrm{m}\)</div>
                         <div class="math-block fragment">\(v_0=2\,\mathrm{m/s}\)</div>
                         <div class="math-block fragment">\(\frac12a=4\Rightarrow a=8\,\mathrm{m/s^2}\)</div>
@@ -803,12 +867,34 @@
                 <div class="grid-2">
                     <div class="problem">
                         Desde un balcón de \(20\,\mathrm{m}\) se lanza una pelota verticalmente hacia arriba con \(v_0=10\,\mathrm{m/s}\). Usa \(g=10\,\mathrm{m/s^2}\). ¿Cuánto tarda en llegar al suelo?
+                        <div class="image-box" style="margin-top: 12px;">
+                            <svg viewBox="0 0 420 280" aria-label="Referencias para lanzamiento desde altura">
+                                <rect width="420" height="280" fill="#fff"/>
+                                <line x1="105" y1="235" x2="105" y2="45" stroke="#2c2c2c" stroke-width="4"/>
+                                <polygon points="105,45 93,70 117,70" fill="#2c2c2c"/>
+                                <line x1="82" y1="235" x2="330" y2="235" stroke="#7d725f" stroke-width="3"/>
+                                <line x1="82" y1="115" x2="330" y2="115" stroke="#b78b4d" stroke-width="3" stroke-dasharray="9 7"/>
+                                <circle cx="210" cy="115" r="12" fill="#d1493f"/>
+                                <line x1="210" y1="97" x2="210" y2="58" stroke="#4f8f62" stroke-width="4"/>
+                                <polygon points="210,58 198,80 222,80" fill="#4f8f62"/>
+                                <line x1="260" y1="82" x2="260" y2="150" stroke="#d1493f" stroke-width="4"/>
+                                <polygon points="260,150 248,128 272,128" fill="#d1493f"/>
+                                <text x="122" y="62" font-size="18">+y</text>
+                                <text x="230" y="121" font-size="18">y0 = 20 m</text>
+                                <text x="230" y="241" font-size="18">y = 0</text>
+                                <text x="270" y="120" font-size="18" fill="#d1493f">g</text>
+                            </svg>
+                        </div>
                     </div>
                     <div class="solution">
                         <div class="line fragment">Eje positivo hacia arriba: \(y_0=20\), \(y=0\), \(a=-10\).</div>
+                        <div class="line fragment">Fórmula inicial:</div>
+                        <div class="math-block fragment">\(y=y_0+v_0t+\frac12at^2\)</div>
                         <div class="math-block fragment">\(0=20+10t-5t^2\)</div>
                         <div class="math-block fragment">\(5t^2-10t-20=0\)</div>
                         <div class="math-block fragment">\(t^2-2t-4=0\)</div>
+                        <div class="math-block fragment">\(t=\frac{2\pm\sqrt{(-2)^2-4(1)(-4)}}{2}\)</div>
+                        <div class="math-block fragment">\(t=\frac{2\pm\sqrt{20}}{2}=1\pm\sqrt5\)</div>
                         <div class="math-block fragment">\(t=1+\sqrt5\approx 3{,}24\,\mathrm{s}\)</div>
                     </div>
                 </div>
