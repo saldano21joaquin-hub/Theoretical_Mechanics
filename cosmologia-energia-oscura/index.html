@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisión de paper: Exploring hints for dark energy</title>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 50px 110px 50px;
+            background: linear-gradient(to bottom, #ffffff 0%, #f5f1e8 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 95px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .slide-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1200px;
+            text-align: center;
+        }
+
+        .portada {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            gap: 25px;
+        }
+
+        .portada-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #2c2c2c;
+            line-height: 1.2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .portada-subtitle {
+            font-size: 1.7rem;
+            color: #5a5a5a;
+            margin-top: 10px;
+            line-height: 1.3;
+        }
+
+        .portada-divider {
+            width: 250px;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #e0a456, transparent);
+            margin: 20px 0;
+        }
+
+        .portada-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+            font-size: 1.2rem;
+            color: #6a6a6a;
+        }
+
+        .portada-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .portada-info-label {
+            font-size: 0.85rem;
+            color: #a0a0a0;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .portada-info-value {
+            font-size: 1.3rem;
+            color: #2c2c2c;
+            font-weight: 500;
+        }
+
+        .slide-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2c2c2c;
+            margin-bottom: 25px;
+            line-height: 1.3;
+        }
+
+        .slide-title.question {
+            font-size: 2rem;
+            color: #e0a456;
+        }
+
+        .content-text {
+            font-size: 1.25rem;
+            color: #2c2c2c;
+            line-height: 1.7;
+            text-align: left;
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        .content-list {
+            font-size: 1.25rem;
+            color: #2c2c2c;
+            text-align: left;
+            max-width: 950px;
+            margin: 0 auto;
+            line-height: 1.85;
+        }
+
+        .content-list li {
+            margin-bottom: 12px;
+        }
+
+        .math-block {
+            font-size: 1.3rem;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(224, 160, 86, 0.05);
+            border-radius: 8px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .two-column {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .column {
+            flex: 1;
+            max-width: 500px;
+            text-align: left;
+        }
+
+        .column-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #e0a456;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .column-content {
+            font-size: 1.15rem;
+            color: #2c2c2c;
+            line-height: 1.9;
+        }
+
+        .equation-line {
+            margin: 12px 0;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fragment {
+            opacity: 0;
+        }
+
+        .fragment.visible {
+            opacity: 1;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 12px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px;
+            font-size: 0.95rem;
+            color: #888888;
+            z-index: 10;
+            min-height: 70px;
+            border-top: 1px solid #e0e0e0;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .footer-left {
+            text-align: left;
+            flex: 1;
+            padding-right: 20px;
+            word-wrap: break-word;
+        }
+
+        .footer-center {
+            text-align: center;
+            flex: 1;
+            padding: 0 20px;
+            word-wrap: break-word;
+        }
+
+        .footer-right {
+            text-align: right;
+            flex: 1;
+            padding-left: 20px;
+            word-wrap: break-word;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .nav-button {
+            width: 45px;
+            height: 45px;
+            border: 2px solid #e0e0e0;
+            background: #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #2c2c2c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: #f5f1e8;
+            border-color: #e0a456;
+            color: #e0a456;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-size: 0.95rem;
+            color: #8a8a8a;
+            z-index: 100;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            color: #2c2c2c;
+        }
+
+        strong {
+            color: #e0a456;
+            font-weight: 700;
+        }
+
+        em {
+            color: #e0a456;
+            font-style: italic;
+        }
+
+        .boxed {
+            border: 2px solid #e0a456;
+            padding: 15px 25px;
+            border-radius: 6px;
+            display: inline-block;
+            margin: 20px 0;
+            background: rgba(224, 160, 86, 0.08);
+        }
+
+        .definition-box {
+            border-left: 4px solid #e0a456;
+            padding: 15px 25px;
+            background: rgba(224, 160, 86, 0.08);
+            margin: 15px 0;
+            border-radius: 4px;
+            text-align: left;
+            font-size: 1.2rem;
+            line-height: 1.7;
+        }
+    </style>
+<style>
+.slide.active{animation:fadeIn .4s ease-out}.slide{padding:40px 55px 105px;overflow-y:auto}.slide-content{max-width:1250px}.column-content{font-size:1.25rem;line-height:1.65}.column{max-width:none}.figure-layout{display:grid;grid-template-columns:1.65fr 1fr;gap:30px;align-items:center}.figure-layout img{width:100%;max-height:52vh;object-fit:contain}.figure-copy{text-align:left;font-size:1.25rem;line-height:1.5}.figure-copy p{margin:14px 0}.citation{font-size:.8rem;color:#777;margin-top:18px}.compact-math{font-size:1.1rem}.footer{position:fixed;bottom:0;min-height:75px;justify-content:center;width:100%;pointer-events:none}.footer-center{flex:none}.slide-counter,.navigation{bottom:15px}.portada-title{font-size:clamp(2rem,4vw,3.3rem)}.section-title{font-size:clamp(2rem,4vw,3.4rem);line-height:1.35}.fragment{transition:opacity .3s}@media(max-width:750px){.slide{padding:35px 30px 100px}.two-column{gap:18px}.column-content,.figure-copy{font-size:1rem}.slide-title{font-size:1.7rem}.figure-layout{grid-template-columns:1fr}.figure-layout img{max-height:34vh}.footer-center{font-size:.7rem}.compact-math{font-size:.85rem}}@media(prefers-reduced-motion:reduce){.slide.active,.fragment.visible{animation:none}}@media print{body{overflow:visible}.presentation-container{display:block;height:auto}.slide{display:flex!important;height:100vh;break-after:page}.fragment{opacity:1}.navigation,.footer,.slide-counter{display:none}}
+</style></head>
+<body><div class="presentation-container"><section class="slide active" aria-label="Diapositiva 1"><div class="slide-content"><div class="portada"><div class="portada-subtitle">Revisión de paper</div><h1 class="portada-title">Exploring hints for dark energy<br>density evolution in light<br>of recent data</h1><div class="portada-divider"></div><div class="portada-info-value">Víctor H. Cárdenas · arXiv:1405.5116v2 (2015)</div><div class="portada-info">Universidad de Valparaíso<br>Presenta: Joaquín Saldaño</div></div></div></section>
+<section class="slide" aria-label="Diapositiva 2"><div class="slide-content"><h1 class="section-title">Introduction</h1></div></section>
+<section class="slide" aria-label="Diapositiva 3"><div class="slide-content"><h1 class="slide-title">Contexto y pregunta del paper</h1><div class="two-column"><div class="column"><h2 class="column-title">Marco y motivación</h2><div class="column-content">FLRW + relatividad general<br>Análisis plano: $\Omega_k=0$<p>$$\Lambda{\rm CDM}:\quad w=-1,\quad\rho_{\rm de}=\text{cte.}$$</p>Origen de $\Lambda$<br>Problema de coincidencia cósmica</div></div><div class="column"><h2 class="column-title">Información observacional</h2><div class="column-content">SNIa: distancia luminosa $d_L$<br>Cúmulos, $f_{\rm gas}$: distancia angular $d_A$<br>BAO + CMB: geometría y expansión</div></div></div><div class="fragment" data-fragment-index="0"><div class="definition-box">SNIa + $f_{\rm gas}$: indicios de variación reciente<br>Al añadir BAO + CMB: la preferencia desaparece</div><h2 class="slide-title question">¿Es constante la densidad de energía oscura?</h2></div><p class="citation">Cárdenas (2015), sección I. Datos y tensiones del artículo, no del estado observacional actual.</p></div></section>
+<section class="slide" aria-label="Diapositiva 4"><div class="slide-content"><h1 class="section-title">Insights from the reconstructed<br>deceleration parameter</h1></div></section>
+<section class="slide" aria-label="Diapositiva 5"><div class="slide-content"><h1 class="slide-title">Expansión, distancias y observaciones</h1><div class="compact-math">$$E(z)\equiv H(z)/H_0,\qquad E^2_{\Lambda{\rm CDM}}=\Omega_m(1+z)^3+\Omega_r(1+z)^4+\Omega_k(1+z)^2+\Omega_\Lambda\tag{3}$$
+$$r(z)=\frac{c}{H_0\sqrt{-\Omega_k}}\sin\left[\sqrt{-\Omega_k}\int_0^z\frac{dz'}{E(z')}\right]\tag{2}$$
+$$\Omega_k=0:\quad r(z)=\frac{c}{H_0}\int_0^z\frac{dz'}{E(z')}$$</div><div class="two-column fragment" data-fragment-index="0"><div class="column"><h2 class="column-title">586 supernovas Ia</h2><div class="column-content">$d_L=(1+z)r$<br>Módulo de distancia $\mu(z)$</div></div><div class="column"><h2 class="column-title">42 cúmulos</h2><div class="column-content">$d_A=r/(1+z)$<br>Fracción de gas $f_{\rm gas}(z)$</div></div></div><p class="citation">Sección II, ecs. (2)–(6). $r$ es la distancia comóvil transversal; en geometría plana coincide con la radial.</p></div></section>
+<section class="slide" aria-label="Diapositiva 6"><div class="slide-content"><h1 class="slide-title">CPL y reconstrucción de la aceleración</h1><div class="math-block">$$w(a)=w_0+(1-a)w_1,\qquad a=\frac{1}{1+z}\tag{1}$$</div><p class="content-text" style="text-align:center">Chevallier–Polarski–Linder: parametrización de $p_{\rm de}/\rho_{\rm de}$<br>$\Lambda$CDM: $w_0=-1,\ w_1=0$</p><div class="fragment" data-fragment-index="0"><div class="compact-math">$$\{d_L,f_{\rm gas}\}_{\rm obs}\xrightarrow{\min\chi^2}(w_0,w_1,\Omega_m,\ldots)\longrightarrow E(z)\longrightarrow q(z)$$</div><div class="math-block">$$q(z)=-\frac{\ddot a}{aH^2}=\frac{1+z}{E(z)}\frac{dE}{dz}-1\tag{4}$$</div><p class="content-text" style="text-align:center">$q<0$: aceleración &emsp; $q>0$: desaceleración</p></div><p class="citation">Sección II, ecs. (1), (4) y tabla I. Reconstrucción dependiente del modelo.</p></div></section>
+<section class="slide" aria-label="Diapositiva 7"><div class="slide-content"><h1 class="slide-title">La pista en $q(z)$</h1><div class="figure-layout"><img src="https://raw.githubusercontent.com/saldano21joaquin-hub/Physics/main/undergraduate-courses/cosmology/dark-energy-density-evolution/figures/fig1-q.png" alt="Figura 1: reconstrucción de q(z) con CPL y SNIa más fracción de gas"><div class="figure-copy"><p><strong>SNIa + $f_{\rm gas}$</strong></p><p>$q=0$ cerca de $z\simeq0.8$</p><p>Mínimo de $q$ cerca de $z\simeq0.2$</p><div class="fragment" data-fragment-index="0"><p>Hacia hoy: posible debilitamiento de la aceleración relativa</p><p><strong>Indicio de baja significancia</strong></p></div><p>Sombreado: $1\sigma$<br>Discontinuas: $2\sigma$</p></div></div><p class="citation">Cárdenas (2015), figura 1. El tiempo avanza hacia $z=0$.</p></div></section>
+<section class="slide" aria-label="Diapositiva 8"><div class="slide-content"><h1 class="slide-title">La misma pista en la densidad</h1><div class="compact-math">$$X(z)\equiv\frac{\rho_{\rm de}(z)}{\rho_{\rm de}(0)}=e^{-3w_1z/(1+z)}(1+z)^{3(1+w_0+w_1)}\tag{7}$$</div><div class="figure-layout"><img src="https://raw.githubusercontent.com/saldano21joaquin-hub/Physics/main/undergraduate-courses/cosmology/dark-energy-density-evolution/figures/fig2-x.png" alt="Figura 2: reconstrucción de X(z) con CPL; línea horizontal X=1"><div class="figure-copy"><p><strong>$\Lambda$CDM: $X(z)=1$</strong></p><p>CPL + SNIa + $f_{\rm gas}$:<br>preferencia por menor $X$ a mayor $z$</p><div class="fragment" data-fragment-index="0"><p>BAO + CMB eliminan la preferencia</p><p><strong>¿Depende de elegir CPL?</strong></p></div></div></div><p class="citation">Cárdenas (2015), figura 2. Sombreado $1\sigma$, discontinuas $2\sigma$. Indicio, no detección.</p></div></section></div><div class="footer"><div class="footer-center">Revisión de Cárdenas (2015) · Cosmología</div></div>    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">8</span>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-button" id="prev-btn" aria-label="Anterior">←</button>
+        <button class="nav-button" id="next-btn" aria-label="Siguiente">→</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+
+            const fragments = slides[currentSlide].querySelectorAll('[data-fragment-index]');
+            fragments.forEach(frag => frag.classList.remove('visible'));
+        }
+
+        function nextSlide() {
+            const pending = slides[currentSlide].querySelector('.fragment:not(.visible)');
+            if (pending) { pending.classList.add('visible'); return; }
+            if(currentSlide < totalSlides-1) showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            if(currentSlide > 0) showSlide(currentSlide - 1);
+        }
+
+        document.getElementById('next-btn').addEventListener('click', nextSlide);
+        document.getElementById('prev-btn').addEventListener('click', prevSlide);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        showSlide(0);
+
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.slide.active')) {
+                const fragments = document.querySelectorAll('.slide.active [data-fragment-index]');
+                const visibleFragments = document.querySelectorAll('.slide.active [data-fragment-index].visible');
+
+                if (visibleFragments.length < fragments.length) {
+                    const nextIndex = visibleFragments.length;
+                    const nextFragments = document.querySelectorAll(`.slide.active [data-fragment-index="${nextIndex}"]`);
+                    nextFragments.forEach(frag => frag.classList.add('visible'));
+                } else {
+                    nextSlide();
+                }
+            }
+        });
+
+        // KaTeX auto-render
+        document.addEventListener('DOMContentLoaded', function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ],
+                throwOnError: false
+            });
+        });
+    </script>
+</body>
+</html>
